@@ -123,7 +123,9 @@ kyureki_temp.forEach(kyureki => {
   //console.log(year);
   if (years[year].eto !== eto) console,log(`Something wrong: ##${year} ${eto}##`);
   const wareki = years[year].wareki = {
-    small: []
+    small: [],
+    months: {},
+    lunar: true
   };
 
   const months = months_txt.match(/(閏?)(十[一二]?|[一二三四五六七八九])月(※?)/g).map(month => {
@@ -135,13 +137,23 @@ kyureki_temp.forEach(kyureki => {
     const month_txt = `${uruu ? 'u' : ''}${num}`;
     if (small) wareki.small.push(month_txt);
     return month_txt;
-  }).filter(x => x);
+  });
   //console.log(months);
 
-  const mstart_base = gregorian.match(/(?:\d{3,4}\/)?(1[012]?|0?[1-9])[\/月](3[01]|[012]?[0-9])日?/g);
-  const mstart = mstart_base.map(month => {
+  const mstart_base = gregorian.match(/(?:(\d{3,4})\/)?(1[012]?|0?[1-9])[\/月](3[01]|[012]?[0-9])日?/g);
+  const mstarts = mstart_base.map(mstart_txt => {
+    const ms_match = mstart_txt.match(/(?:(\d{3,4})\/)?(1[012]?|0?[1-9])[\/月](3[01]|[012]?[0-9])日?/);
+    const s_year = ms_match[1];
+    const next = !!(s_year && parseInt(s_year) === parseInt(year) + 1);
+    const s_month = `${ms_match[2].length === 2 ? '' : '0'}${ms_match[2]}`;
+    const s_date = `${ms_match[3].length === 2 ? '' : '0'}${ms_match[3]}`;
+    return `${next ? 'n' : ''}${s_month}${s_date}`;
+  });
 
-  })
+  months.forEach((month, index) => {
+    const mstart = mstarts[index];
+    years[year].wareki.months[month] = {start_gregorian: mstart};
+  });
   //console.log(mstart_base);
 });
 
