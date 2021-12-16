@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "fs-extra": "^10.0.0"
+    "fs-extra": "^10.0.0",
+    "julian-gregorian": "^1.0.0"
   },
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

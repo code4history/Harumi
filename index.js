@@ -1,8 +1,10 @@
 const fs = require('fs-extra');
+const CalendarConverter = require('julian-gregorian').default;
 
 const jikkans = '甲乙丙丁戊己庚辛壬癸'.split("");
 const junishis = '子丑寅卯辰巳午未申酉戌亥'.split("");
-const month_convert = {
+const han2num_table = {
+  "元": 1,
   "一": 1,
   "二": 2,
   "三": 3,
@@ -12,9 +14,7 @@ const month_convert = {
   "七": 7,
   "八": 8,
   "九": 9,
-  "十": 10,
-  "十一": 11,
-  "十二": 12
+  "十": 10
 };
 
 const start = 645;
@@ -111,55 +111,99 @@ kyurekis.forEach(kyureki => {
     console.log(`Something bad? ##${kyureki}##`);
   }
 });
-console.log(kyureki_temp);
+//console.log(kyureki_temp);
 kyureki_temp.forEach(kyureki => {
   const months_txt = kyureki.months;
-  console.log(kyureki);
-  console.log(months_txt);
+  //console.log(kyureki);
+  //console.log(months_txt);
   const gregorian = kyureki.gregorian;
+  const julian = kyureki.julian;
   const eto = months_txt.match(/[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]/)[0];
-  const year = gregorian.match(/暦,(\d{3,4})\//)[1];
+  //console.log(months_txt);
+  const nengo_match = months_txt.match(/([^一二三四五六七八九十0-9]{2,4})([元一二三四五六七八九十0-9]+)年/);
+  const gengo = nengo_match[1];
+  const nen = han2Num(nengo_match[2]);
+  //console.log(`${gengo} ${nen}`);
+  const year = (gregorian || julian).match(/暦,(\d{3,4})\//)[1];
   //console.log(eto);
   //console.log(year);
-  if (years[year].eto !== eto) console,log(`Something wrong: ##${year} ${eto}##`);
+  if (years[year].eto !== eto) console.log(`Something wrong: ##${year} ${eto}##`);
+  years[year].nengo.forEach( nengo => {
+    const nengo_match = nengo.match(/([^一二三四五六七八九十0-9]{2,4})([元一二三四五六七八九十0-9]+)/);
+    const l_gengo = nengo_match[1];
+    const l_nen = han2Num(nengo_match[2]);
+    if (l_gengo === gengo && nen !== l_nen) console.log(`Something wrong: ##${gengo} ${nen} != ${l_nen}##`);
+  });
   const wareki = years[year].wareki = {
-    small: [],
-    months: {},
+    months: [],
     lunar: true
   };
 
   const months = months_txt.match(/(閏?)(十[一二]?|[一二三四五六七八九])月(※?)/g).map(month => {
     const m_match = month.match(/(閏?)(十[一二]?|[一二三四五六七八九])月(※?)/);
     const uruu = !!m_match[1];
-    const num = month_convert[m_match[2]];
+    const num = han2Num(m_match[2]);
     const small = !!m_match[3];
     if (uruu) wareki.uruu = num;
     const month_txt = `${uruu ? 'u' : ''}${num}`;
-    if (small) wareki.small.push(month_txt);
-    return month_txt;
+    const ret = {
+      name: month_txt
+    };
+    if (small) ret.small = true;
+    return ret;
   });
   //console.log(months);
 
-  const mstart_base = gregorian.match(/(?:(\d{3,4})\/)?(1[012]?|0?[1-9])[\/月](3[01]|[012]?[0-9])日?/g);
+  const mstart_base = (gregorian || julian).match(/(?:(\d{3,4})\/)?(1[012]?|0?[1-9])[\/月](3[01]|[012]?[0-9])日?/g);
   const mstarts = mstart_base.map(mstart_txt => {
     const ms_match = mstart_txt.match(/(?:(\d{3,4})\/)?(1[012]?|0?[1-9])[\/月](3[01]|[012]?[0-9])日?/);
-    const s_year = ms_match[1];
-    const next = !!(s_year && parseInt(s_year) === parseInt(year) + 1);
-    const s_month = `${ms_match[2].length === 2 ? '' : '0'}${ms_match[2]}`;
-    const s_date = `${ms_match[3].length === 2 ? '' : '0'}${ms_match[3]}`;
-    return `${next ? 'n' : ''}${s_month}${s_date}`;
+    let n_year = parseInt(ms_match[1] || year);
+    let n_month = parseInt(ms_match[2]);
+    let n_date = parseInt(ms_match[3]);
+    if (!gregorian) {
+      const greg = CalendarConverter.fromJulianToGregorian(n_year, n_month, n_date);
+      const greg_match = greg.match(/(\d{3,4})-(\d{1,2})-(\d{1,2})/);
+      n_year = parseInt(greg_match[1]);
+      n_month = parseInt(greg_match[2]);
+      n_date = parseInt(greg_match[3]);
+    }
+    const s_year = zeroFill(n_year, 4);
+    const s_month = zeroFill(n_month);
+    const s_date = zeroFill(n_date);
+
+    return `${s_year}-${s_month}-${s_date}`;
   });
 
   months.forEach((month, index) => {
-    const mstart = mstarts[index];
-    years[year].wareki.months[month] = {start_gregorian: mstart};
+    month.start_gregorian = mstarts[index];
+    years[year].wareki.months.push(month);
   });
   //console.log(mstart_base);
 });
 
 
 
-console.log(JSON.stringify(years));
+
+//console.log(JSON.stringify(years));
 //console.log(JSON.stringify(data));
 //console.log(JSON.stringify(eras));
 //console.log(JSON.stringify(era_hash, null, " "));
+
+function zeroFill(val, digits = 2) {
+  const txt = `${val}`;
+  return `${'0'.repeat(digits - txt.length)}${txt}`;
+}
+
+function han2Num(han) {
+  const match = han.match(/^(?:(?:([二三四五六七八九]?)(十))?([元一二三四五六七八九]?)|([0-9]+))$/);
+  if (match && match[4]) return parseInt(match[4]);
+  let ret = 0;
+  if (match && match[2]) {
+    ret += match[1] ? han2num_table[match[1]] * 10 : 10;
+  }
+  if (match && match[3]) {
+    ret += han2num_table[match[3]];
+  }
+  //console.log(`${han} ${ret}`);
+  return ret;
+}
