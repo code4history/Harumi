@@ -1,5 +1,28 @@
 {
   "dependencies": {
     "fs-extra": "^10.0.0"
-  }
+  },
+  "name": "harumi",
+  "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/code4history/Harumi.git"
+  },
+  "keywords": [
+    "wareki",
+    "calendar",
+    "converter"
+  ],
+  "author": "Kohei Otsuka (kochizufan@code4history.dev)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/code4history/Harumi/issues"
+  },
+  "homepage": "https://github.com/code4history/Harumi#readme"
 }
