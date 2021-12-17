@@ -107,8 +107,14 @@ kyurekis.forEach(kyureki => {
     } else {
       current.gregorian = kyureki;
     }
+  } else if (kyureki.match(/([^一二三四五六七八九十0-9]{2,4})([元一二三四五六七八九十0-9]+)年/)) {
+    const o_gengo = RegExp.$1;
+    const o_nen = han2Num(RegExp.$2);
+    if (!current.other_nengos) current.other_nengos = [];
+    current.other_nengos.push(`${o_gengo}${o_nen}`);
+    //console.log(`${o_gengo}${o_nen}`);
   } else {
-    console.log(`Something bad? ##${kyureki}##`);
+    if (kyureki !== '') console.log(`Something bad? ##${kyureki}##`);
   }
 });
 //console.log(kyureki_temp);
@@ -118,6 +124,7 @@ kyureki_temp.forEach(kyureki => {
   //console.log(months_txt);
   const gregorian = kyureki.gregorian;
   const julian = kyureki.julian;
+  const other_nengos = kyureki.other_nengos;
   const eto = months_txt.match(/[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]/)[0];
   //console.log(months_txt);
   const nengo_match = months_txt.match(/([^一二三四五六七八九十0-9]{2,4})([元一二三四五六七八九十0-9]+)年/);
@@ -133,6 +140,15 @@ kyureki_temp.forEach(kyureki => {
     const l_gengo = nengo_match[1];
     const l_nen = han2Num(nengo_match[2]);
     if (l_gengo === gengo && nen !== l_nen) console.log(`Something wrong: ##${gengo} ${nen} != ${l_nen}##`);
+    if (other_nengos) {
+      other_nengos.forEach(other_nengo => {
+        //console.log(other_nengo);
+        const o_nengo_match = other_nengo.match(/([^一二三四五六七八九十0-9]{2,4})([元一二三四五六七八九十0-9]+)/);
+        const o_gengo = o_nengo_match[1];
+        const o_nen = han2Num(o_nengo_match[2]);
+        if (l_gengo === o_gengo && o_nen !== l_nen) console.log(`Something wrong: ##${o_gengo} ${o_nen} != ${l_nen}##`);
+      });
+    }
   });
   const wareki = years[year].wareki = {
     months: [],
