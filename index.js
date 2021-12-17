@@ -128,6 +128,7 @@ kyureki_temp.forEach(kyureki => {
   const eto = months_txt.match(/[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]/)[0];
   //console.log(months_txt);
   const nengo_match = months_txt.match(/([^一二三四五六七八九十0-9]{2,4})([元一二三四五六七八九十0-9]+)年/);
+  //if (!nengo_match) console.log(months_txt);
   const gengo = nengo_match[1];
   const nen = han2Num(nengo_match[2]);
   //console.log(`${gengo} ${nen}`);
@@ -200,7 +201,7 @@ kyureki_temp.forEach(kyureki => {
 
 
 
-//console.log(JSON.stringify(years));
+console.log(JSON.stringify(years));
 //console.log(JSON.stringify(data));
 //console.log(JSON.stringify(eras));
 //console.log(JSON.stringify(era_hash, null, " "));
