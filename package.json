@@ -1,14 +1,16 @@
 {
-  "dependencies": {
-    "fs-extra": "^10.0.0",
-    "julian-gregorian": "^1.0.0"
-  },
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "cross-env NODE_ENV=production webpack --color --progress",
+    "dev": "cross-env NODE_ENV=development webpack serve",
+    "prepublishOnly": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,25 @@
   "bugs": {
     "url": "https://github.com/code4history/Harumi/issues"
   },
-  "homepage": "https://github.com/code4history/Harumi#readme"
+  "homepage": "https://github.com/code4history/Harumi#readme",
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@types/node": "^16.11.1",
+    "@types/webpack": "^5.28.0",
+    "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.4.0",
+    "fs-extra": "^10.0.0",
+    "html-webpack-plugin": "^5.4.0",
+    "style-loader": "^3.3.0",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.0",
+    "webpack-dev-server": "^4.3.1",
+    "yarn": "^1.22.17"
+  },
+  "dependencies": {
+    "jsonpath-plus": "^6.0.1",
+    "julian-gregorian": "^1.0.0"
+  }
 }
