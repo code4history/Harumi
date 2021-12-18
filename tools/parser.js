@@ -283,7 +283,7 @@ Object.keys(years).sort((a, b) => {
     ambig_key += nen.split("").map((x, i,ar) => {
       const dig = ar.length - i;
       const dec2_3 = dig === 2 ? "十" + (x === "2" ? "廿" : x === "3" ? "卅丗" : "") : "";
-      return dec2_3 + num2han_table[x];
+      return dec2_3 + (dig === 2 && x === "1" ? '' : num2han_table[x]);
     }).join("");
     if (nen === "1") ambig_key += "元";
     ambiguos[ambig_key] = year;
