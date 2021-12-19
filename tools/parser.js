@@ -38,7 +38,18 @@ const data = require('../data_src/data.json');
 const eras = fs.readFileSync(path.resolve(__dirname, '../data_src/wareki.txt'), 'utf8').split(/\r?\n/);
 const kyurekis = fs.readFileSync(path.resolve(__dirname, '../data_src/kyureki.csv'), 'utf8').split(/\r?\n/);
 const gengos = fs.readFileSync(path.resolve(__dirname, '../data_src/gengo.csv'), 'utf8').split(/\r?\n/);
+const duplicates = fs.readFileSync(path.resolve(__dirname, '../data_src/duplicate.csv'), 'utf8').split(/\r?\n/);
 const era_hash = {};
+const dup_hash = {};
+duplicates.forEach(line => {
+  const attrs = line.split(",");
+  const hash = dup_hash[attrs[0]] = {};
+  for (let i = 0; i < 3; i++) {
+    if (attrs[1 + i * 2]) {
+      hash[attrs[1 + i * 2]] = attrs[2 + i * 2];
+    }
+  }
+});
 
 const era_group = ['', '', ''];
 eras.forEach((era) => {
@@ -242,21 +253,22 @@ const gengo_periods = gengos.map(line => {
 //console.log(JSON.stringify(gengo_periods));
 
 // Export Western era vs Japan lunar calendar
-const wj_content = `module.exports = ${JSON.stringify(years)};`;
-fs.writeFile(path.join(__dirname,'../src/west_japan_cal.js'), wj_content, 'utf-8');
+fs.writeFile(path.join(__dirname,'../src/west_japan_cal.json'), JSON.stringify(years), 'utf-8');
 
 // Export Gengo vs period
-const gp_content = `module.exports = ${JSON.stringify(gengo_periods)};`;
-fs.writeFile(path.join(__dirname,'../src/gengo_periods.js'), gp_content, 'utf-8');
+fs.writeFile(path.join(__dirname,'../src/gengo_periods.json'), JSON.stringify(gengo_periods), 'utf-8');
 
 // Create ambiguous search data
-const ambiguos = {};
-const solid = {};
 const nengo_store = {};
+const ambiguos_arr = [];
 Object.keys(years).sort((a, b) => {
   return parseInt(a) - parseInt(b);
 }).forEach(year => {
   const year_data = years[year];
+  const store_base = {
+    year,
+    eto: year_data.eto
+  };
   const nengo_exists = year_data.nengo.reduce((prev, x) => {
     const x_match = x.match(/^([^\d]{2,4})(\d+)$/);
     const nengo = x_match[1];
@@ -266,17 +278,22 @@ Object.keys(years).sort((a, b) => {
     return prev;
   }, {});
   Object.keys(nengo_store).forEach(nengo => {
+    const store_data = Object.assign({}, store_base);
     if (!nengo_exists[nengo]) {
       nengo_store[nengo].exist++;
       if (nengo_store[nengo].exist < 3) {
         nengo_store[nengo].nen++;
+        store_data.over_match = true;
       } else {
         delete nengo_store[nengo];
         return;
       }
     }
     const nen = `${nengo_store[nengo].nen}`;
-    solid[`${nengo}${nen}`] = year;
+    if (dup_hash[year] && dup_hash[year][`${nengo}${nen}`]) {
+      store_data.condition = dup_hash[year][`${nengo}${nen}`];
+    }
+    store_data.nengo = `${nengo}${nen}`;
     let ambig_key = nengo;
     ambig_key += kyuji.shin2Kyus(nengo);
     ambig_key += year_data.eto;
@@ -286,7 +303,8 @@ Object.keys(years).sort((a, b) => {
       return dec2_3 + (dig === 2 && x === "1" ? '' : num2han_table[x]);
     }).join("");
     if (nen === "1") ambig_key += "元";
-    ambiguos[ambig_key] = year;
+    store_data.ambiguos = ambig_key;
+    ambiguos_arr.push(store_data);
   });
   //console.log(year);
   //console.log(nengo_store);
@@ -296,10 +314,7 @@ Object.keys(years).sort((a, b) => {
 //console.log(solid);
 
 // Export Gengo vs period
-const ab_content = `module.exports = ${JSON.stringify(ambiguos)};`;
-fs.writeFile(path.join(__dirname,'../src/ambiguos.js'), ab_content, 'utf-8');
-const sl_content = `module.exports = ${JSON.stringify(solid)};`;
-fs.writeFile(path.join(__dirname,'../src/solid.js'), sl_content, 'utf-8');
+fs.writeFile(path.join(__dirname,'../src/ambiguos_table.json'), JSON.stringify(ambiguos_arr), 'utf-8');
 
 function zeroFill(val, digits = 2) {
   const txt = `${val}`;
