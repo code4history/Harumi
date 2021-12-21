@@ -10,7 +10,10 @@ module.exports = /** @type {import("webpack").Configuration} */ ({
   entry: "./src/index.js",
 
   plugins: [
-    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+    new HtmlWebpackPlugin({
+      scriptLoading: 'defer',
+      template: "./public/index.html"
+    }),
   ],
 
   resolve: {
