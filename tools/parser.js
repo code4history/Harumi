@@ -8,22 +8,30 @@ const junishis = '子丑寅卯辰巳午未申酉戌亥'.split("");
 const han2num_table = {
   "元": 1,
   "一": 1,
+  "壱": 1,
+  "壹": 1,
   "二": 2,
+  "弐": 2,
+  "貳": 2,
   "三": 3,
+  "参": 3,
+  "參": 3,
   "四": 4,
   "五": 5,
+  "伍": 5,
   "六": 6,
   "七": 7,
   "八": 8,
   "九": 9,
-  "十": 10
+  "十": 10,
+  "拾": 10
 };
 const num2han_table = {
-  "1": "一",
-  "2": "二",
-  "3": "三",
+  "1": "元一壱壹",
+  "2": "二弐貳",
+  "3": "三参參",
   "4": "四",
-  "5": "五",
+  "5": "五伍",
   "6": "六",
   "7": "七",
   "8": "八",
@@ -299,10 +307,9 @@ Object.keys(years).sort((a, b) => {
     ambig_key += year_data.eto;
     ambig_key += nen.split("").map((x, i,ar) => {
       const dig = ar.length - i;
-      const dec2_3 = dig === 2 ? "十" + (x === "2" ? "廿" : x === "3" ? "卅丗" : "") : "";
+      const dec2_3 = dig === 2 ? "十拾" + (x === "2" ? "廿" : x === "3" ? "卅丗" : "") : "";
       return dec2_3 + (dig === 2 && x === "1" ? '' : num2han_table[x]);
     }).join("");
-    if (nen === "1") ambig_key += "元";
     store_data.ambiguos = ambig_key;
     ambiguos_arr.push(store_data);
   });

@@ -1,7 +1,7 @@
 {
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/index.js",
   "files": [
     "dist",
