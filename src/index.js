@@ -8,7 +8,7 @@ function ambiguousSearch(text, options = {}) {
   const chars = text.split("");
   const enable_over_match = options.enable_over_match || false;
   const range = options.range || '';
-  const range_match = range.match(/^(\d+)-(\d+)$/);
+  const range_match = range.match(/^(\d*)-(\d*)$/);
   const since = range_match ? range_match[1] : '';
   const till = range_match ? range_match[2] : '';
 

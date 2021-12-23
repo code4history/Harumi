@@ -28,7 +28,7 @@ module.exports = /** @type {import("webpack").Configuration} */ ({
   },
 
   devServer: {
-    host: "0.0.0.0",
+    host: "localhost",
     port: 5000,
     allowedHosts: "all",
     hot: true,
