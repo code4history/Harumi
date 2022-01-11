@@ -10,7 +10,7 @@ workbox.navigationPreload.enable();
 
 // splash icon images
 workbox.routing.registerRoute(
-  new RegExp('/(?:splashscreens|icons)/.*'),
+  new RegExp('(?:splashscreens|icons)/.*'),
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: 'icons',
     maxEntries: 50,
@@ -39,8 +39,8 @@ workbox.precaching.precacheAndRoute([
   // css
   'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
   // font
-  './fonts/genkai-sub.woff',
-  './fonts/genkai-sub.woff2',
+  'fonts/genkai-sub.woff',
+  'fonts/genkai-sub.woff2',
   // other
   'manifest.json'
 ]);
