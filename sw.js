@@ -13,13 +13,7 @@ workbox.routing.registerRoute(
   new RegExp('(?:splashscreens|icons)/.*'),
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: 'icons',
-    maxEntries: 50,
-    plugins: [
-      new workbox.expiration.Plugin({
-        maxAgeSeconds: 60 * 60 * 24 * 30, // 1month
-        purgeOnQuotaError: true
-      }),
-    ],
+    maxEntries: 50
   })
 );
 
