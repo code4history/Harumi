@@ -10,6 +10,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --color --progress",
     "dev": "cross-env NODE_ENV=development webpack serve",
+    "assets": "pwa-asset-generator ./icons/icon_original.png ./icons --background \"#ffffff\" --manifest manifest.json --index index.html --favicon",
     "prepublishOnly": "yarn build"
   },
   "repository": {
