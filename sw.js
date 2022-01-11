@@ -10,7 +10,7 @@ workbox.navigationPreload.enable();
 
 // splash icon images
 workbox.routing.registerRoute(
-  new RegExp('(?:splashscreens|icons)/.*'),
+  new RegExp('icons/.*'),
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: 'icons',
     maxEntries: 50
