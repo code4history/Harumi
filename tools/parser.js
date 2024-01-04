@@ -27,7 +27,7 @@ const han2num_table = {
   "拾": 10
 };
 const num2han_table = {
-  "1": "元一壱壹",
+  "1": "一壱壹",
   "2": "二弐貳",
   "3": "三参參",
   "4": "四",
@@ -308,7 +308,8 @@ Object.keys(years).sort((a, b) => {
     ambig_key += nen.split("").map((x, i,ar) => {
       const dig = ar.length - i;
       const dec2_3 = dig === 2 ? "十拾" + (x === "2" ? "廿" : x === "3" ? "卅丗" : "") : "";
-      return dec2_3 + (dig === 2 && x === "1" ? '' : num2han_table[x]);
+      const wo_gan = dec2_3 + (dig === 2 && x === "1" ? '' : num2han_table[x]);
+      return wo_gan + (ar.length == 1 && x === "1" ? "元" : "");
     }).join("");
     store_data.ambiguos = ambig_key;
     ambiguos_arr.push(store_data);
