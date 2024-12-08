@@ -1,7 +1,3 @@
-# Harumi
-Harumi (春海): Japanese-Western calendar open data and web converter.  
-Project name is named from [渋川春海(Harumi Shibukawa)](https://ja.wikipedia.org/wiki/%E6%B8%8B%E5%B7%9D%E6%98%A5%E6%B5%B7), who was known as Japanese Astronomer in 17th-18th century.
-
 # Harumi (春海)
 
 日本の和暦西暦変換データおよび Web コンバーター
@@ -81,24 +77,6 @@ const results = ambiguousSearch('戊', { tsuchinoe_inu_flag: true });
 MIT License
 
 Copyright (c) 2024 Code for History
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ## 開発者
 
