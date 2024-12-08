@@ -1,4 +1,4 @@
-import { ambiguousSearch } from './index';
+import { ambiguousSearch, SearchOptions, SearchResult } from './index';
 
 // グローバルに公開
 window.Harumi = { ambiguousSearch };
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("年号を推定する文字列を入力してください");
       return;
     }
-    const options = {};
+    const options = {} as SearchOptions;
     const era_start = (document.querySelector("#era_start") as HTMLInputElement).value;
     const era_end = (document.querySelector("#era_end") as HTMLInputElement).value;
     if (era_start !== '' || era_end !== '') {
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (results.length === 0) {
       results.push({
         nengo: "結果なし"
-      });
+      } as SearchResult);
     }
     document.querySelector("#lists")!.innerHTML = results.reduce((prev, curr) => {
       prev = `${prev}<li class="list-group-item"><span class="display-5">${curr.nengo}</span> <span class="lead">

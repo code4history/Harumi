@@ -1,34 +1,14 @@
 import type { SearchOptions, SearchResult, AmbiguosEntry } from './types';
-import rawAmbiguosTable from './data/ambiguos_table.json';
-
-// 配列データをオブジェクトに変換
-const ambiguosTable = rawAmbiguosTable.reduce<Record<string, AmbiguosEntry>>((acc, entry) => {
-  acc[entry.year] = entry;
-  return acc;
-}, {});
-
-function evaluateJSONPath(path: string, data: Record<string, AmbiguosEntry>): AmbiguosEntry[] {
-  const matches = path.match(/\$\.\*\[\?\(@property === "ambiguos" &&(.*?)\)\]\^/);
-  if (!matches) return [];
-  
-  const conditions = matches[1].split('&&').map(cond => {
-    const matchResult = cond.trim().match(/@\.match\(\/(.*?)\\/);
-    return matchResult ? matchResult[1] : '';
-  });
-
-  return Object.entries(data)
-    .filter(([_, value]) => {
-      if (!value.ambiguos) return false;
-      return conditions.every(pattern => {
-        const regex = new RegExp(pattern);
-        return regex.test(value.ambiguos);
-      });
-    })
-    .map(([_, value]) => value);
-}
+import ambiguosTable from './data/ambiguos_table.json';
+import { JSONPath } from 'jsonpath-plus';
 
 export function ambiguousSearch(text: string, options: SearchOptions = {}): SearchResult[] {
+  // 空文字列や空白のみの場合は早期リターン
+  if (!text || text.trim() === '') return [];
+
   const chars = text.replace(/\s+/g,"").split("");
+  if (chars.length === 0) return [];
+
   const enable_over_match = options.enable_over_match || false;
   const tsuchinoe_inu_flag = options.tsuchinoe_inu_flag || false;
   const tsuchinoto_mi_flag = options.tsuchinoto_mi_flag || false;
@@ -46,25 +26,17 @@ export function ambiguousSearch(text: string, options: SearchOptions = {}): Sear
   }).join(" && ");
   regexes = `$.*[?(@property === "ambiguos" &&${regexes})]^`;
 
-  return evaluateJSONPath(regexes, ambiguosTable).reduce<SearchResult[]>((prev, candidate) => {
-    console.log(regexes);
-    console.log(ambiguosTable);
+  return JSONPath({path: regexes, json: ambiguosTable}).reduce((prev: SearchResult[], candidate: AmbiguosEntry) => {
     const year = parseInt(candidate.year);
     if ((since && parseInt(since) > year) || (till && parseInt(till) < year)) return prev;
     if (!enable_over_match && candidate.over_match) return prev;
 
-    // 新しいオブジェクトを作成し、必要なプロパティのみを含める
-    const result: SearchResult = {
-      year,  // number型として設定
-      nengo: candidate.nengo,
-      ...(candidate.eto && { eto: candidate.eto }),
-      ...(candidate.condition && { condition: candidate.condition }),
-      ...(candidate.over_match && { over_match: candidate.over_match })
-    };
-
-    prev.push(result);
+    const result = Object.assign({}, candidate) as any;
+    delete result.ambiguos;
+    result.year = year;
+    prev.push(result as SearchResult);
     return prev;
-  }, []);
+  }, [] as SearchResult[]);
 }
 
 export type { SearchOptions, SearchResult };

@@ -23,5 +23,3 @@ export interface SearchResult {
   condition?: string;
   over_match?: boolean;
 }
-
-export type AmbiguosData = AmbiguosEntry[];

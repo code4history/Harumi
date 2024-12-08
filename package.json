@@ -47,10 +47,13 @@
     "@typescript-eslint/parser": "^6.21.0",
     "@vitest/coverage-v8": "^1.2.2",
     "eslint": "^8.56.0",
-    "pwa-asset-generator": "^6.0.5",
+    "pwa-asset-generator": "^6.4.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
     "vite-plugin-dts": "^3.7.2",
     "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "jsonpath-plus": "^10.2.0"
   }
 }
