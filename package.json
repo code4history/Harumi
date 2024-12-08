@@ -1,7 +1,7 @@
 {
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "main": "./dist/harumi.umd.cjs",
   "module": "./dist/harumi.js",
@@ -35,6 +35,7 @@
     "calendar",
     "converter"
   ],
+  "readme": "README.md",
   "author": "Kohei Otsuka (kochizufan@code4history.dev)",
   "license": "MIT",
   "bugs": {
