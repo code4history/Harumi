@@ -1,17 +1,30 @@
 {
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "0.0.3",
-  "main": "src/index.js",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/harumi.umd.cjs",
+  "module": "./dist/harumi.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/harumi.js",
+      "require": "./dist/harumi.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --color --progress",
-    "dev": "cross-env NODE_ENV=development webpack serve",
-    "assets": "pwa-asset-generator ./icons/icon_original.png ./icons --background \"#ffffff\" --manifest manifest.json --index index.html --favicon",
-    "prepublishOnly": "yarn build"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "assets": "pwa-asset-generator ./icons/icon_original.png ./icons --background \"#ffffff\" --manifest manifest.json --index index.html --favicon"
   },
   "repository": {
     "type": "git",
@@ -29,24 +42,15 @@
   },
   "homepage": "https://github.com/code4history/Harumi#readme",
   "devDependencies": {
-    "@babel/core": "^7.15.8",
-    "@babel/preset-env": "^7.15.8",
-    "@types/node": "^16.11.1",
-    "@types/webpack": "^5.28.0",
-    "babel-loader": "^8.2.2",
-    "cross-env": "^7.0.3",
-    "css-loader": "^6.4.0",
-    "fs-extra": "^10.0.0",
-    "html-webpack-plugin": "^5.4.0",
+    "@types/node": "^20.11.16",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitest/coverage-v8": "^1.2.2",
+    "eslint": "^8.56.0",
     "pwa-asset-generator": "^6.0.5",
-    "style-loader": "^3.3.0",
-    "webpack": "^5.58.2",
-    "webpack-cli": "^4.9.0",
-    "webpack-dev-server": "^4.3.1",
-    "yarn": "^1.22.17"
-  },
-  "dependencies": {
-    "jsonpath-plus": "^6.0.1",
-    "julian-gregorian": "^1.0.0"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-dts": "^3.7.2",
+    "vitest": "^1.2.2"
   }
 }
