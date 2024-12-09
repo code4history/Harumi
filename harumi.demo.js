@@ -1,6 +1,6 @@
 import { ambiguousSearch as i } from "./harumi.js";
 window.Harumi = { ambiguousSearch: i };
-document.getElementById("version").textContent = "0.1.3";
+document.getElementById("version").textContent = "0.1.4";
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#do_search").addEventListener("click", () => {
     const a = document.querySelector("#era_text").value;
