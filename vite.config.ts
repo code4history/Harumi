@@ -8,21 +8,24 @@ const packageJson = JSON.parse(
   readFileSync('./package.json', 'utf-8')
 );
 
-// デモページ用のエントリーポイント
-const demo = resolve(__dirname, 'src/demo.ts');
-// ライブラリ用のエントリーポイント
-const lib = resolve(__dirname, 'src/index.ts');
+// npm package用のビルドの時のみ単一エントリーポイント
+const isPackageBuild = process.env.BUILD_MODE === 'package';
 
 export default defineConfig({
   build: {
-    lib: {
-      entry: process.env.NODE_ENV === 'production' ? lib : demo,
-      name: 'Harumi',
-      fileName: 'harumi'
-    },
-    rollupOptions: {
-      external: [], // 外部依存がある場合はここに追加
-    }
+    lib: isPackageBuild
+      ? {
+          entry: resolve(__dirname, 'src/index.ts'),
+          name: 'Harumi',
+          fileName: 'harumi'
+        }
+      : {
+          entry: {
+            'harumi': resolve(__dirname, 'src/index.ts'),
+            'harumi.demo': resolve(__dirname, 'src/demo.ts')
+          },
+          formats: ['es']
+        }
   },
   plugins: [dts()],
   json: {

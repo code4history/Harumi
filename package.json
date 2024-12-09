@@ -1,7 +1,7 @@
 {
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "main": "./dist/harumi.umd.cjs",
   "module": "./dist/harumi.js",
@@ -19,7 +19,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "cross-env BUILD_MODE=package tsc && vite build",
+    "deploy": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -47,6 +48,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitest/coverage-v8": "^1.2.2",
+    "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "pwa-asset-generator": "^6.4.0",
     "typescript": "^5.3.3",
