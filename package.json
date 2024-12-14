@@ -1,8 +1,9 @@
 {
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
+  "private": false,
   "main": "./dist/harumi.umd.cjs",
   "module": "./dist/harumi.js",
   "types": "./dist/index.d.ts",
@@ -15,12 +16,13 @@
   },
   "files": [
     "dist",
-    "src"
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "cross-env BUILD_MODE=package tsc && vite build",
-    "deploy": "tsc && vite build",
+    "build": "tsc && cross-env BUILD_MODE=package vite build",
+    "deploy": "cp public/index.html index.html && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -37,7 +39,7 @@
     "converter"
   ],
   "readme": "README.md",
-  "author": "Kohei Otsuka (kochizufan@code4history.dev)",
+  "author": "Code for History",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/code4history/Harumi/issues"

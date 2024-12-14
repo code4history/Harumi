@@ -12,31 +12,40 @@ const packageJson = JSON.parse(
 const isPackageBuild = process.env.BUILD_MODE === 'package';
 
 export default defineConfig({
-  build: {
-    lib: isPackageBuild
-      ? {
-          entry: resolve(__dirname, 'src/index.ts'),
-          name: 'Harumi',
-          fileName: 'harumi'
-        }
-      : {
+  build: isPackageBuild
+    ? {
+        lib: {
           entry: {
-            'harumi': resolve(__dirname, 'src/index.ts'),
-            'harumi.demo': resolve(__dirname, 'src/demo.ts')
+            'index': resolve(__dirname, 'src/index.ts'),
           },
           formats: ['es']
         }
-  },
+      }
+    : {
+        outDir: 'dist',
+        emptyOutDir: true,
+        rollupOptions: {
+          input: {
+            main: resolve(__dirname, 'index.html')
+          },
+          output: {
+            entryFileNames: 'assets/[name].[hash].js',
+            chunkFileNames: 'assets/[name].[hash].js',
+            assetFileNames: 'assets/[name].[hash][extname]'
+          }
+        }
+      },
   plugins: [dts()],
   json: {
     stringify: true // JSONをstringifyして含める
   },
   server: {
-    port: 8888,  // 既存のwebpack devServerと同じポート
-    open: true   // 起動時にブラウザを開く
+    port: 5174,
+    open: true,
+    strictPort: true
   },
   publicDir: 'public',
-  appType: 'spa',  // SPAとして扱う
+  appType: 'spa',
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(packageJson.version)
   }
