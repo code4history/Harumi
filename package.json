@@ -1,16 +1,18 @@
 {
   "name": "harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "private": false,
-  "main": "./dist/harumi.umd.cjs",
+  "main": "./dist/harumi.cjs",
   "module": "./dist/harumi.js",
+  "browser": "./dist/harumi.umd.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/harumi.js",
-      "require": "./dist/harumi.umd.cjs",
+      "require": "./dist/harumi.cjs",
+      "browser": "./dist/harumi.umd.cjs",
       "types": "./dist/index.d.ts"
     }
   },

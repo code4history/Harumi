@@ -16,9 +16,10 @@ export default defineConfig({
     ? {
         lib: {
           entry: {
-            'index': resolve(__dirname, 'src/index.ts'),
+            'harumi': resolve(__dirname, 'src/index.ts'),
           },
-          formats: ['es']
+          formats: ['es','cjs','umd'],
+          name: 'harumi'
         }
       }
     : {
