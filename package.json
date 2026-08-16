@@ -52,14 +52,14 @@
     "@types/node": "^25.5.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@vitest/coverage-v8": "^3.2.6",
+    "@vitest/coverage-v8": "^4.1.10",
     "cross-env": "^10.1.0",
     "eslint": "^8.56.0",
     "pwa-asset-generator": "^6.4.0",
     "typescript": "^5.9.3",
-    "vite": "^7.3.5",
+    "vite": "^8.2.1",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.2.6"
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "jsonpath-plus": "^10.2.0"
