@@ -1,24 +1,25 @@
 # Harumi (春海)
 
-日本の和暦西暦変換データおよび Web コンバーター
+**[Read this document in Japanese / 日本語で読む](README.ja.md)**
 
-Harumi (春海): Japanese-Western calendar open data and web converter.  
-Project name is named from [渋川春海(Harumi Shibukawa)](https://ja.wikipedia.org/wiki/%E6%B8%8B%E5%B7%9D%E6%98%A5%E6%B5%B7), who was known as Japanese Astronomer in 17th-18th century.
+Japanese-Western calendar open data and a web converter.
 
-## 使い方
+The project name comes from [Harumi Shibukawa (渋川春海)](https://en.wikipedia.org/wiki/Shibukawa_Shunkai), a Japanese astronomer of the 17th–18th century.
 
-### インストール
+## Usage
+
+### Installation
 
 ```bash
-npm install harumi
+pnpm add harumi
 ```
 
-### 基本的な使用方法
+### Basic usage
 
 ```javascript
 import { ambiguousSearch } from 'harumi';
 
-// 基本的な検索
+// Basic search
 const results = ambiguousSearch('寛永');
 console.log(results);
 // [
@@ -27,60 +28,60 @@ console.log(results);
 //   ...
 // ]
 
-// オプション付きの検索
+// Search with options
 const options = {
-  range: '1600-1700',              // 西暦年の範囲指定
-  enable_over_match: true,         // 延長マッチを有効化
-  tsuchinoe_inu_flag: true,       // 「戊」と「戌」を同一視
-  tsuchinoto_mi_flag: true        // 「己」と「巳」を同一視
+  range: '1600-1700',              // Restrict the Gregorian year range
+  enable_over_match: true,         // Include extended (over-match) periods
+  tsuchinoe_inu_flag: true,        // Treat 戊 and 戌 as the same character
+  tsuchinoto_mi_flag: true         // Treat 己 and 巳 as the same character
 };
 
 const results2 = ambiguousSearch('寛永', options);
 ```
 
-### オプション
+### Options
 
-- `range`: 検索対象とする西暦年の範囲を指定（例: '1600-1700'）
-- `enable_over_match`: 元号の延長期間も検索対象に含める（デフォルト: false）
-- `tsuchinoe_inu_flag`: 「戊」と「戌」を同一の文字として扱う（デフォルト: false）
-- `tsuchinoto_mi_flag`: 「己」と「巳」を同一の文字として扱う（デフォルト: false）
+- `range`: Gregorian year range to search in (e.g. `'1600-1700'`)
+- `enable_over_match`: Include the extended period of an era name (default: `false`)
+- `tsuchinoe_inu_flag`: Treat 戊 and 戌 as the same character (default: `false`)
+- `tsuchinoto_mi_flag`: Treat 己 and 巳 as the same character (default: `false`)
 
-### 戻り値の型
+### Return type
 
 ```typescript
 interface SearchResult {
-  year: number;          // 西暦年
-  nengo: string;         // 年号
-  eto?: string;          // 干支
-  condition?: string;    // 条件（例: "南朝"）
-  over_match?: boolean;  // 延長マッチかどうか
+  year: number;          // Gregorian year
+  nengo: string;         // Era name (nengo)
+  eto?: string;          // Sexagenary cycle sign (eto)
+  condition?: string;    // Condition (e.g. "南朝", the Southern Court)
+  over_match?: boolean;  // Whether this is an over-match result
 }
 ```
 
-### ユースケース例
+### Example use cases
 
-石碑の年号が部分的にしか判読できない場合の年代推定：
+Estimating a date when the era name on a stone monument is only partially legible:
 
 ```javascript
-// 「慶」の文字だけが判読できる場合
+// Only the character 慶 is legible
 const results = ambiguousSearch('慶');
 
-// 「応」の文字と1860年代という情報がある場合
+// The character 応 is legible and the monument is known to be from the 1860s
 const results = ambiguousSearch('応', { range: '1860-1869' });
 
-// 「戊」か「戌」かはっきりしない場合
+// It is unclear whether the character is 戊 or 戌
 const results = ambiguousSearch('戊', { tsuchinoe_inu_flag: true });
 ```
 
-## ライセンス
+## License
 
 MIT License
 
 Copyright (c) 2024 Code for History
 
-## 開発者
+## Developers
 
 - [Kohei Otsuka](https://github.com/kochizufan)
 - [Code for History](https://github.com/code4history)
 
-あなたの貢献をお待ちしています！イシューやプルリクエストは大歓迎です。
+Contributions are welcome. Issues and pull requests are very much appreciated.
