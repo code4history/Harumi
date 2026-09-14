@@ -6,3 +6,5 @@ allowBuilds:
 # （正本は scripts/m1-t3/overrides.json。全量コピーは verify:m1-t3:overrides を FAIL させる）
 overrides:
   minimatch: "^9.0.7"
+  # extract-zip（high×2・修正版なし）→ Electron 公式の置換 fork。経路限定（oct26-m5-t12）。
+  "@puppeteer/browsers>extract-zip": "npm:@electron-internal/extract-zip@^1.0.5"
