@@ -106,6 +106,54 @@ if (typeof search !== "function") {
   }
 }
 
+// (c) nengoNames の基本検索・年範囲・空入力・複数年号の重複除去
+const names = esm?.nengoNames ?? cjs?.nengoNames;
+if (typeof names !== "function") {
+  push("S5c nengoNames が ESM / CJS の双方から取れる", false, "esm=" + typeof esm?.nengoNames + " cjs=" + typeof cjs?.nengoNames);
+  push("S5c nengoNames の3ケース", false, "nengoNames を取得できません");
+} else {
+  push(
+    "S5c nengoNames が ESM / CJS の双方から取れる",
+    typeof esm?.nengoNames === "function" && typeof cjs?.nengoNames === "function",
+    "esm=" + typeof esm?.nengoNames + " cjs=" + typeof cjs?.nengoNames,
+  );
+  try {
+    const basic = names("寛永");
+    push(
+      "S5c nengoNames '寛永' が ['寛永'] を返す",
+      Array.isArray(basic) && basic.length === 1 && basic[0] === "寛永",
+      "val=" + JSON.stringify(basic),
+    );
+    const ranged = names("寛永", { range: "1624-1630" });
+    push(
+      "S5c nengoNames '寛永'（range 1624-1630）が ['寛永'] を返す",
+      Array.isArray(ranged) && ranged.length === 1 && ranged[0] === "寛永",
+      "val=" + JSON.stringify(ranged),
+    );
+    const emptyNames = names("");
+    push(
+      "S5c nengoNames 空入力が空配列を返す",
+      Array.isArray(emptyNames) && emptyNames.length === 0,
+      "len=" + (Array.isArray(emptyNames) ? emptyNames.length : "not-array"),
+    );
+    const multi = names("寛");
+    const distinct = Array.isArray(multi) ? new Set(multi).size === multi.length : false;
+    push(
+      "S5c nengoNames '寛' が複数年号名を重複なく返す",
+      Array.isArray(multi) && multi.length > 1 && distinct && multi[0] === "寛平",
+      "val=" + JSON.stringify(multi),
+    );
+    const showa = names("昭和61年");
+    push(
+      "S5c nengoNames '昭和61年' が ['昭和'] を返す（年号名の末尾算用数字を除く）",
+      Array.isArray(showa) && showa.length === 1 && showa[0] === "昭和",
+      "val=" + JSON.stringify(showa),
+    );
+  } catch (error) {
+    push("S5c nengoNames の3ケース", false, error.message);
+  }
+}
+
 process.stdout.write(JSON.stringify(results));
 `;
 
