@@ -39,6 +39,16 @@ const options = {
 const results2 = ambiguousSearch('寛永', options);
 ```
 
+### Accepted input forms
+
+`ambiguousSearch` normalizes the input before matching, so the following forms are accepted for the same era year:
+
+- A trailing `年` (year) is stripped (e.g. `'昭和六十一年'` matches `'昭和六十一'`).
+- Half-width and full-width Arabic numerals are treated the same as their kanji equivalents (e.g. `'昭和61'`, `'昭和６１'`, `'昭和61年'` all match `'昭和六十一'`).
+- `元年` (the first year of an era) is treated as year 1 (e.g. `'昭和元年'` matches `'昭和1'`). The character `元` itself represents year 1 in the data, so it is kept as-is and matches only the first year of the era.
+- A trailing `年間` or `年中` (the year is unknown) matches by the era name only and returns every year of that era via the normal search path — no special full-period expansion is performed (e.g. `'応永年間'` and `'応永年中'` return the same results as `'応永'`).
+- Characters and symbols in the middle of the input are not stripped.
+
 ### Options
 
 - `range`: Gregorian year range to search in (e.g. `'1600-1700'`)

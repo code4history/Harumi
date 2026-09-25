@@ -173,4 +173,75 @@ describe('ambiguousSearch', () => {
       expect(ambiguousSearch('$.*')).toEqual([]);
     });
   });
+
+  // ---- t2（項目2）：末尾「年」・算用数字・元年・年間/年中・range（AC6） ----
+  describe('t2 入力前処理（AC6）', () => {
+    const showa61 = [{ year: 1986, eto: '丙寅', nengo: '昭和61' }];
+    const showa1 = [{ year: 1926, eto: '丙寅', nengo: '昭和1' }];
+
+    it('末尾の「年」を除去して照合する（昭和六十一年）', () => {
+      expect(ambiguousSearch('昭和六十一年')).toEqual(showa61);
+    });
+
+    it('半角算用数字を漢数字と同じに扱う（昭和61）。末尾「年」なし', () => {
+      expect(ambiguousSearch('昭和61')).toEqual(showa61);
+    });
+
+    it('半角算用数字＋末尾「年」（昭和61年）', () => {
+      expect(ambiguousSearch('昭和61年')).toEqual(showa61);
+    });
+
+    it('全角算用数字を漢数字と同じに扱う（昭和６１）', () => {
+      expect(ambiguousSearch('昭和６１')).toEqual(showa61);
+    });
+
+    it('全角算用数字＋末尾「年」（昭和６１年）', () => {
+      expect(ambiguousSearch('昭和６１年')).toEqual(showa61);
+    });
+
+    it('「元年」を 1 年として扱う（昭和元年）', () => {
+      expect(ambiguousSearch('昭和元年')).toEqual(showa1);
+    });
+
+    it('「元年」を 1 年として扱う（平成元年）', () => {
+      expect(ambiguousSearch('平成元年')).toEqual([{ year: 1989, eto: '己巳', nengo: '平成1' }]);
+    });
+
+    it('末尾「年間」は年号名だけで照合する（応永年間・全期間）', () => {
+      const r = ambiguousSearch('応永年間');
+      expect(r).toEqual(ambiguousSearch('応永'));
+      expect(r).toHaveLength(35);
+      expect(r[0]).toMatchObject({ year: 1394, nengo: '応永1' });
+    });
+
+    it('末尾「年中」は年号名だけで照合する（応永年中・全期間）', () => {
+      const r = ambiguousSearch('応永年中');
+      expect(r).toEqual(ambiguousSearch('応永'));
+      expect(r).toHaveLength(35);
+    });
+
+    it('range は従来どおり西暦年で適用する（昭和61年 + range）', () => {
+      expect(ambiguousSearch('昭和61年', { range: '1986-1986' })).toEqual(showa61);
+      expect(ambiguousSearch('昭和61年', { range: '1980-1985' })).toEqual([]);
+    });
+
+    it('途中の文字や記号は削除しない（寛政() は括弧を残す）', () => {
+      expect(ambiguousSearch('寛政()')).toEqual([]);
+    });
+  });
+
+  // ---- t2 後方互換（HR-33/4）：漢数字だけの既存入力の結果が変わらない ----
+  describe('t2 後方互換（HR-33/4）', () => {
+    it('漢数字だけの入力（昭和六十一）は結果が変わらない', () => {
+      expect(ambiguousSearch('昭和六十一')).toEqual([
+        { year: 1986, eto: '丙寅', nengo: '昭和61' },
+      ]);
+    });
+
+    it('漢数字だけの入力（寛永二十一）は結果が変わらない', () => {
+      expect(ambiguousSearch('寛永二十一')).toEqual([
+        { year: 1644, eto: '甲申', nengo: '寛永21' },
+      ]);
+    });
+  });
 });
