@@ -12,7 +12,9 @@ function arabicToKanji(seq: string): string {
   const kanji = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
   const units = ['', '十', '百', '千'];
   const digits = half.replace(/^0+/, '');
-  if (digits === '') return ''; // "0" 等は該当文字を持たない（元データに 0 の表現が無い）
+  if (digits === '') return seq; // "0" 等は漢数字へ変換できない。空文字へ落とすと
+  // 年号名だけの照合へ縮退するため、元の文字列（"0" や "００"）をそのまま残す。
+  // 元データに 0 の表現は無いので、この文字を含む入力はどのエントリにも includes せず空配列になる。
   let result = '';
   const len = digits.length;
   for (let i = 0; i < len; i++) {

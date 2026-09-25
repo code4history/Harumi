@@ -244,4 +244,58 @@ describe('ambiguousSearch', () => {
       ]);
     });
   });
+
+  // ---- t2 是正（M-1）：0 のみの算用数字列を空文字へ落とさず、年号名だけの照合へ縮退させない ----
+  describe('0 を含む算用数字入力（M-1 是正）', () => {
+    it('昭和0 は年号名だけへ縮退せず空配列（昭和十 と 昭和10 は同一結果）', () => {
+      expect(ambiguousSearch('昭和0')).toEqual([]);
+      expect(ambiguousSearch('昭和十')).toEqual(ambiguousSearch('昭和10'));
+    });
+
+    it('昭和００（全角）は年号名だけへ縮退せず空配列', () => {
+      expect(ambiguousSearch('昭和００')).toEqual([]);
+    });
+
+    it('昭和０（全角1字）は年号名だけへ縮退せず空配列', () => {
+      expect(ambiguousSearch('昭和０')).toEqual([]);
+    });
+
+    it('応永0年間 は年号名だけの規則を暗黙に発動させず空配列', () => {
+      expect(ambiguousSearch('応永0年間')).toEqual([]);
+    });
+
+    it('応永0年中 は空配列', () => {
+      expect(ambiguousSearch('応永0年中')).toEqual([]);
+    });
+
+    it('昭和0年 は空配列', () => {
+      expect(ambiguousSearch('昭和0年')).toEqual([]);
+    });
+
+    it('昭和00年 は空配列', () => {
+      expect(ambiguousSearch('昭和00年')).toEqual([]);
+    });
+
+    it('元0年 は空配列（元 単独の規則へ縮退させない）', () => {
+      expect(ambiguousSearch('元0年')).toEqual([]);
+    });
+
+    it('0 単独・００ 単独・０ 単独・00 単独は空配列', () => {
+      expect(ambiguousSearch('0')).toEqual([]);
+      expect(ambiguousSearch('００')).toEqual([]);
+      expect(ambiguousSearch('０')).toEqual([]);
+      expect(ambiguousSearch('00')).toEqual([]);
+    });
+
+    it('正しく変換される数値（10・20）は壊さない（漢数字入力と同一結果）', () => {
+      expect(ambiguousSearch('昭和10')).toEqual(ambiguousSearch('昭和十'));
+      expect(ambiguousSearch('昭和20')).toEqual(ambiguousSearch('昭和二十'));
+      expect(ambiguousSearch('昭和10')).toHaveLength(55);
+      expect(ambiguousSearch('昭和20')).toHaveLength(15);
+    });
+
+    it('正しく変換される数値（平成10年）は壊さない', () => {
+      expect(ambiguousSearch('平成10年')).toEqual(ambiguousSearch('平成十年'));
+    });
+  });
 });
