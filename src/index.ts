@@ -96,4 +96,23 @@ export function ambiguousSearch(text: string, options: SearchOptions = {}): Sear
   }, [] as SearchResult[]);
 }
 
+// t3（項目3 / AC8・AC9）：年号名だけを返す API。ambiguousSearch の結果から組み立てることで、
+// 候補集合・正規化・literal 照合・range・enable_over_match・両 flag・通常時の over_match 除外を
+// 同じ経路（1 本）に保つ。検索ロジックを 2 本書かない。
+// 結果を候補順（ambiguousSearch の返り値順＝データ順）で一度だけ走査し、nengo 末尾の算用数字
+// （1、10 等）を除いた年号名を最初の出現順で重複除去して返す。
+export function nengoNames(text: string, options: SearchOptions = {}): string[] {
+  const results = ambiguousSearch(text, options);
+  const seen = new Set<string>();
+  const names: string[] = [];
+  for (const result of results) {
+    const base = result.nengo.replace(/[0-9]+$/, '');
+    if (!seen.has(base)) {
+      seen.add(base);
+      names.push(base);
+    }
+  }
+  return names;
+}
+
 export type { SearchOptions, SearchResult };

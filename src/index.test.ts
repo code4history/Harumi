@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ambiguousSearch } from './index';
+import { ambiguousSearch, nengoNames } from './index';
 
 // =============================================================
 // golden（変更前 origin/master = 3ee8902 の実出力を固定。AC3）
@@ -296,6 +296,73 @@ describe('ambiguousSearch', () => {
 
     it('正しく変換される数値（平成10年）は壊さない', () => {
       expect(ambiguousSearch('平成10年')).toEqual(ambiguousSearch('平成十年'));
+    });
+  });
+
+  // ---- t3（項目3）：nengoNames は ambiguousSearch の結果から年号名だけを返す（AC8・AC9） ----
+  describe('nengoNames（AC8・AC9）', () => {
+    it('空入力は空配列（[]）を返す', () => {
+      expect(nengoNames('')).toEqual([]);
+      expect(nengoNames('   ')).toEqual([]);
+    });
+
+    it('非該当の入力は空配列（[]）を返す', () => {
+      expect(nengoNames('XXXXX')).toEqual([]);
+    });
+
+    it('単一年号（寛永）は年号名だけを返す', () => {
+      expect(nengoNames('寛永')).toEqual(['寛永']);
+    });
+
+    it('range 指定で範囲内の年号名だけを返す', () => {
+      expect(nengoNames('寛永', { range: '1624-1630' })).toEqual(['寛永']);
+      // 範囲外（該当年なし）は空配列
+      expect(nengoNames('寛永', { range: '1500-1500' })).toEqual([]);
+    });
+
+    it('通常時は over_match を除外し、enable_over_match で含める', () => {
+      // enable_over_match は年号名を変えない（同一年号の延長期間）ため、通常時と同じ年号名になる
+      expect(nengoNames('寛永', { enable_over_match: true })).toEqual(['寛永']);
+    });
+
+    it('両 flag は ambiguousSearch と同じく候補集合に作用する', () => {
+      // 戊/戌、己/巳 の同一視は候補の広がりに作用し、年号名の抽出は同じ経路を通る
+      expect(() => nengoNames('戊', { tsuchinoe_inu_flag: true })).not.toThrow();
+      expect(() => nengoNames('己', { tsuchinoto_mi_flag: true })).not.toThrow();
+    });
+
+    it('複数年号の入力をデータ順の重複除去で返す', () => {
+      // 「寛」は複数の年号名に含まれ、ambiguousSearch の候補順（データ順）で一度だけ走査して
+      // 年号名を最初の出現順で重複除去して返す
+      expect(nengoNames('寛')).toEqual([
+        '寛平', '寛和', '寛弘', '寛仁', '寛徳', '寛治', '長寛', '寛喜',
+        '寛元', '寛正', '寛永', '寛文', '寛保', '寛延', '寛政',
+      ]);
+    });
+
+    it('年号名の末尾の算用数字を除いた年号名を返す（結果の nengo と一致する形）', () => {
+      // ambiguousSearch の nengo は「昭和61」の形。nengoNames は末尾の算用数字を除いた「昭和」を返す
+      expect(nengoNames('昭和六十一')).toEqual(['昭和']);
+      expect(nengoNames('昭和61')).toEqual(['昭和']);
+    });
+
+    it('t2 の入力形も同じく効く（末尾「年」・算用数字・年間/年中）', () => {
+      // 末尾「年」・算用数字の前処理が nengoNames にも同じく効く
+      expect(nengoNames('昭和61年')).toEqual(['昭和']);
+      expect(nengoNames('昭和６１年')).toEqual(['昭和']);
+      expect(nengoNames('昭和元年')).toEqual(['昭和']);
+      // 末尾「年間」「年中」は年号名だけで照合する
+      expect(nengoNames('応永年間')).toEqual(['応永']);
+      expect(nengoNames('応永年中')).toEqual(['応永']);
+    });
+
+    it('ambiguousSearch と整合する（nengoNames の値は ambiguousSearch の結果から組み立てた年号名と一致）', () => {
+      const text = '寛永';
+      const names = new Set<string>();
+      for (const r of ambiguousSearch(text)) {
+        names.add(r.nengo.replace(/[0-9]+$/, ''));
+      }
+      expect(nengoNames(text)).toEqual(Array.from(names));
     });
   });
 });

@@ -18,7 +18,7 @@ pnpm add harumi
 ### 基本的な使用方法
 
 ```javascript
-import { ambiguousSearch } from 'harumi';
+import { ambiguousSearch, nengoNames } from 'harumi';
 
 // 基本的な検索
 const results = ambiguousSearch('寛永');
@@ -28,6 +28,11 @@ console.log(results);
 //   { year: 1625, nengo: '寛永2', eto: '乙丑' },
 //   ...
 // ]
+
+// 年号名だけを取得
+const names = nengoNames('寛永');
+console.log(names);
+// [ '寛永' ]
 
 // オプション付きの検索
 const options = {
@@ -49,6 +54,29 @@ const results2 = ambiguousSearch('寛永', options);
 - 「元年」は 1 年として扱います（例: `'昭和元年'` は `'昭和1'` に一致）。元データ上「元」は 1 年を表す文字であり、そのまま残すことで元号の初年のみに照合します。
 - 末尾の「年間」「年中」は年号名だけで照合し、その年号の全期間（全エントリ）を通常の検索経路で返します。専用の全期間展開は行いません（例: `'応永年間'`・`'応永年中'` は `'応永'` と同じ結果）。
 - 途中の文字や記号は削除しません。
+
+### 年号名だけを取得する（`nengoNames`）
+
+`nengoNames(text, options?)` は、`ambiguousSearch` が照合する年号名（年の数字を除いたもの）を、最初の出現順（データ順）で重複を除いて返します。入力の形と `options` は `ambiguousSearch` と同じで、候補集合・正規化・literal 照合・`range`・`enable_over_match`・両 flag・通常時の over_match 除外はいずれも `ambiguousSearch` と同一です。
+
+```javascript
+import { nengoNames } from 'harumi';
+
+nengoNames('寛永'); // [ '寛永' ]
+nengoNames('寛永', { range: '1624-1630' }); // [ '寛永' ]
+
+// ambiguousSearch と同じ入力の形が使えます:
+nengoNames('昭和61年'); // [ '昭和' ]
+nengoNames('応永年間'); // [ '応永' ]
+
+// 複数の年号名に含まれる 1 文字は、各年号名を一度ずつデータ順で返します:
+nengoNames('寛'); // [ '寛平', '寛和', ... ]
+
+nengoNames('');       // []（空入力）
+nengoNames('XXXXX');  // []（非該当）
+```
+
+返る `string[]` は年号名だけ（例: `'昭和'`）で、`SearchResult.nengo` に含まれる末尾の年の数字（例: `'1'`・`'10'`）を除いたものです。
 
 ### オプション
 

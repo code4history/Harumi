@@ -1,7 +1,7 @@
-import { ambiguousSearch, SearchOptions, SearchResult } from './index';
+import { ambiguousSearch, nengoNames, SearchOptions, SearchResult } from './index';
 
 // グローバルに公開
-window.Harumi = { ambiguousSearch };
+window.Harumi = { ambiguousSearch, nengoNames };
 
 // バージョン情報を表示
 document.getElementById('version')!.textContent = import.meta.env.APP_VERSION;

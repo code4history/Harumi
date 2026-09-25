@@ -17,7 +17,7 @@ pnpm add harumi
 ### Basic usage
 
 ```javascript
-import { ambiguousSearch } from 'harumi';
+import { ambiguousSearch, nengoNames } from 'harumi';
 
 // Basic search
 const results = ambiguousSearch('寛永');
@@ -37,6 +37,11 @@ const options = {
 };
 
 const results2 = ambiguousSearch('寛永', options);
+
+// Get era names only
+const names = nengoNames('寛永');
+console.log(names);
+// [ '寛永' ]
 ```
 
 ### Accepted input forms
@@ -48,6 +53,30 @@ const results2 = ambiguousSearch('寛永', options);
 - `元年` (the first year of an era) is treated as year 1 (e.g. `'昭和元年'` matches `'昭和1'`). The character `元` itself represents year 1 in the data, so it is kept as-is and matches only the first year of the era.
 - A trailing `年間` or `年中` (the year is unknown) matches by the era name only and returns every year of that era via the normal search path — no special full-period expansion is performed (e.g. `'応永年間'` and `'応永年中'` return the same results as `'応永'`).
 - Characters and symbols in the middle of the input are not stripped.
+
+### Getting era names only (`nengoNames`)
+
+`nengoNames(text, options?)` returns the distinct era names (without the year number) that `ambiguousSearch` would match, in first-appearance (data) order. It accepts the same text forms and the same `options` as `ambiguousSearch`, and its candidate set, normalization, literal matching, `range`, `enable_over_match`, both flags, and the exclusion of over-match results in the normal case are identical to `ambiguousSearch`.
+
+```javascript
+import { nengoNames } from 'harumi';
+
+nengoNames('寛永'); // [ '寛永' ]
+nengoNames('寛永', { range: '1624-1630' }); // [ '寛永' ]
+
+// The same accepted input forms as ambiguousSearch:
+nengoNames('昭和61年');  // [ '昭和' ]
+nengoNames('応永年間');  // [ '応永' ]
+
+// A single character that matches several eras returns each distinct
+// era name once, in data order:
+nengoNames('寛'); // [ '寛平', '寛和', ... ]
+
+nengoNames('');       // [] (empty input)
+nengoNames('XXXXX');  // [] (no match)
+```
+
+The returned `string[]` contains era names only (e.g. `'昭和'`), stripped of the trailing year number (e.g. `'1'`, `'10'`) that appears in `SearchResult.nengo`.
 
 ### Options
 
