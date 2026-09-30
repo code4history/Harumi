@@ -27,8 +27,7 @@ workbox.routing.registerRoute(
 workbox.precaching.precacheAndRoute([
   // html
   'index.html',
-  // js
-  'https://unpkg.com/harumi@1.0.0/dist/harumi.min.js',
+  // js（harumi 本体はページの JS に同梱しているため事前キャッシュしない。存在しない unpkg の URL が残ると install 全体が失敗していた）
   'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js',
   // css
   'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
