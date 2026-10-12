@@ -31,7 +31,7 @@ export function ambiguousSearch(text: string, options: SearchOptions = {}): Sear
     if ((since && parseInt(since) > year) || (till && parseInt(till) < year)) return prev;
     if (!enable_over_match && candidate.over_match) return prev;
 
-    const result = Object.assign({}, candidate) as any;
+    const result: Omit<AmbiguosEntry, 'year' | 'ambiguos'> & { year: string | number; ambiguos?: string } = Object.assign({}, candidate);
     delete result.ambiguos;
     result.year = year;
     prev.push(result as SearchResult);
