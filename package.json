@@ -65,6 +65,6 @@
     "vitest": "^4.1.11"
   },
   "dependencies": {
-    "jsonpath-plus": "^10.2.0"
+    "jsonpath-plus": "^10.3.0"
   }
 }
