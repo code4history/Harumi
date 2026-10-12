@@ -1,1 +1,2 @@
-export declare const ambiguosTable: Record<string, any>;
+import { AmbiguosEntry } from './types';
+export declare const ambiguosTable: AmbiguosEntry[];
