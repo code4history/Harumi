@@ -1,5 +1,5 @@
 {
-  "name": "harumi",
+  "name": "@c4h/harumi",
   "description": "Harumi (春海): Japanese-Western calendar open data and web converter",
   "version": "1.0.1",
   "type": "module",

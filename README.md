@@ -11,13 +11,24 @@ The project name comes from [Harumi Shibukawa (渋川春海)](https://en.wikiped
 ### Installation
 
 ```bash
-pnpm add harumi
+pnpm add @c4h/harumi
 ```
+
+### Migrating from the unscoped package name
+
+Up to version 1.0.1 this package was published under the unscoped name harumi. From the 2026-11 release it is published as `@c4h/harumi`. The API is unchanged; only the package name differs.
+
+```bash
+pnpm remove harumi
+pnpm add @c4h/harumi
+```
+
+Then change the module specifier in your imports from harumi to `@c4h/harumi`.
 
 ### Basic usage
 
 ```javascript
-import { ambiguousSearch } from 'harumi';
+import { ambiguousSearch } from '@c4h/harumi';
 
 // Basic search
 const results = ambiguousSearch('寛永');

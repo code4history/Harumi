@@ -12,13 +12,24 @@ Harumi (春海): Japanese-Western calendar open data and web converter.
 ### インストール
 
 ```bash
-pnpm add harumi
+pnpm add @c4h/harumi
 ```
+
+### スコープなしの旧名からの移行
+
+1.0.1 までは、スコープなしの harumi という名前で公開していました。2026-11 のリリースから `@c4h/harumi` の名前で公開します。API は同じで、変わるのはパッケージ名だけです。
+
+```bash
+pnpm remove harumi
+pnpm add @c4h/harumi
+```
+
+import の指定子を harumi から `@c4h/harumi` に書き換えてください。
 
 ### 基本的な使用方法
 
 ```javascript
-import { ambiguousSearch } from 'harumi';
+import { ambiguousSearch } from '@c4h/harumi';
 
 // 基本的な検索
 const results = ambiguousSearch('寛永');

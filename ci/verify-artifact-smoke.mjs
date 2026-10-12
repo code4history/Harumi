@@ -49,21 +49,21 @@ const push = (label, ok, detail) => results.push([label, Boolean(ok), String(det
 let esm = null;
 let cjs = null;
 try {
-  esm = await import("harumi");
-  push("S5a ESM import('harumi') が解決する", true, Object.keys(esm).sort().join(","));
+  esm = await import("@c4h/harumi");
+  push("S5a ESM import('@c4h/harumi') が解決する", true, Object.keys(esm).sort().join(","));
 } catch (error) {
-  push("S5a ESM import('harumi') が解決する", false, error.message);
+  push("S5a ESM import('@c4h/harumi') が解決する", false, error.message);
 }
 try {
-  cjs = require("harumi");
-  push("S5a CJS require('harumi') が解決する", true, Object.keys(cjs).sort().join(","));
+  cjs = require("@c4h/harumi");
+  push("S5a CJS require('@c4h/harumi') が解決する", true, Object.keys(cjs).sort().join(","));
 } catch (error) {
-  push("S5a CJS require('harumi') が解決する", false, error.message);
+  push("S5a CJS require('@c4h/harumi') が解決する", false, error.message);
 }
 // 解決先が staging（＝配布された tarball の中身）であることを要求する。
 // repo の作業ツリーへ解決されていたら S5 は成立していない（Node の self-reference 経路）。
 try {
-  const resolved = require.resolve("harumi");
+  const resolved = require.resolve("@c4h/harumi");
   push("S5a 解決先が staging の配布物である", resolved.startsWith(process.cwd() + path.sep), resolved);
 } catch (error) {
   push("S5a 解決先が staging の配布物である", false, error.message);
