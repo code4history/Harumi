@@ -2,7 +2,18 @@
 
 **[Read this document in Japanese / 日本語で読む](README.ja.md)**
 
-Japanese-Western calendar open data and a web converter.
+Harumi is a tool built with use in the field in mind. People who record stone monuments read the inscription on site, and often only a few characters of the date are legible. Give Harumi the characters you could make out — say `応` and `丙` from `◯応 拾▢年 丙△` — and it returns the era names, years and sexagenary cycle signs (eto) that satisfy them.
+
+A fragment like `◯応 拾▢年` rarely settles the year by itself, but a fragment of the sexagenary cycle narrows the candidates sharply. With `慶`, `二` and `寅` it is down to a single candidate:
+
+```javascript
+import { ambiguousSearch } from '@c4h/harumi';
+
+ambiguousSearch('慶二寅');
+// [ { year: 1866, nengo: '慶応2', eto: '丙寅' } ]
+```
+
+Researchers who have every era name and every sexagenary sign memorised do not need Harumi; memorising them is hard work, and pulling out a reference table each time is slow too. Searching the candidates from the few characters you could read is what Harumi is for. The ambiguous matching works only between the pairs of similar-looking sexagenary signs named in the options, 戊/戌 and 己/巳; it does not look for similar characters in general. Harumi is not a tool for normalising how era names are written, nor for converting Japanese to Western years — if you need that, please propose it as a separate function in an issue.
 
 The project name comes from [Harumi Shibukawa (渋川春海)](https://en.wikipedia.org/wiki/Shibukawa_Shunkai), a Japanese astronomer of the 17th–18th century.
 
@@ -49,6 +60,13 @@ const options = {
 
 const results2 = ambiguousSearch('寛永', options);
 ```
+
+### What `ambiguousSearch` accepts
+
+- Input the characters you could read. Era-name characters, kanji numerals and sexagenary signs are matched. Old and new forms of an era-name character (応/應) and variant numerals (一/壱/壹, 二/弐/貳, 十/拾) are matched as well.
+- It does not accept `年` (it appears in every era name, so it is no clue), Arabic numerals, or `元年` / `年間`.
+- Symbols such as `?` or parentheses are not an exception: they are matched as the characters they are, so a query containing one returns 0 results. Symbols are not used in inscriptions, so searches containing symbols are not supported.
+- This is not an API for normalising era names or for converting between Japanese and Western years. Please propose such a function separately in an issue.
 
 ### Options
 
