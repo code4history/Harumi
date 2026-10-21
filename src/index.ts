@@ -2,12 +2,23 @@ import type { SearchOptions, SearchResult, AmbiguosEntry } from './types';
 import ambiguosTable from './data/ambiguos_table.json';
 import { JSONPath } from 'jsonpath-plus';
 
+// 曖昧検索が受け付ける文字数の上限（空白除去・重複除去の後で数える）。
+// 照合の費用は「候補の数 × 入力の文字数」で伸びるため、サーバー側で呼ばれた場合の
+// DoS を防ぐ目的で設ける（SR-NOV26-A1-1）。
+const MAX_AMBIGUOUS_CHARS = 64;
+
 export function ambiguousSearch(text: string, options: SearchOptions = {}): SearchResult[] {
   // 空文字列や空白のみの場合は早期リターン
   if (!text || text.trim() === '') return [];
 
-  const chars = text.replace(/\s+/g,"").split("");
+  // 照合結果は入力の「字の集合」だけに依存し、順序・重複回数には依存しない
+  // （下の chars.every が 1 文字ずつの述語の論理積になっているため）。
+  // よって照合の前に重複を除去してよい。費用は入力の長さではなく字種の数に比例する。
+  const chars = [...new Set(text.replace(/\s+/g,"").split(""))];
   if (chars.length === 0) return [];
+  // 重複除去後の字数が上限を超える入力は、例外にせず空の結果を返す。
+  // 候補の列挙（JSONPath）より前に判定し、長大入力で照合費用を発生させない。
+  if (chars.length > MAX_AMBIGUOUS_CHARS) return [];
 
   const enable_over_match = options.enable_over_match || false;
   const tsuchinoe_inu_flag = options.tsuchinoe_inu_flag || false;

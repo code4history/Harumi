@@ -45,7 +45,9 @@ export default defineConfig({
     open: true,
     strictPort: true
   },
-  publicDir: 'public',
+  // publicDir は Pages（SPA）ビルドのための機構。package ビルドの成果物（npm の tarball）へ
+  // デモの public/ を混ぜない（m12 SR-NOV26-D-05）。
+  publicDir: isPackageBuild ? false : 'public',
   appType: 'spa',
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(packageJson.version)
