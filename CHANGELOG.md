@@ -2,7 +2,7 @@
 
 このプロジェクトの主な変更を記録します。版数は [Semantic Versioning](https://semver.org/) に従います。
 
-## [Unreleased]
+## [1.1.0-rc.1] - 2026-10-25
 
 ### Changed
 - **パッケージ名の変更**: `harumi` から `@c4h/harumi` へ変更しました。インストールは `pnpm add @c4h/harumi` に書き換えてください。API は同じです（import するパッケージ名だけが変わります）。
