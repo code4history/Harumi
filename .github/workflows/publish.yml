@@ -175,10 +175,19 @@ jobs:
           echo "::add-mask::${ID}"
           # npm CLI（npm-package-arg の escapedName）と同じ形にする: スコープの区切りは小文字の %2f
           ESC=$(node -p 'process.env.NAME.replace("/","%2f")')
-          CODE=$(curl -sS -o /dev/null -w '%{http_code}' -X POST -H "Authorization: Bearer ${ID}" \
+          BODY="${RUNNER_TEMP}/oidc-exchange-body"
+          CODE=$(curl -sS -o "${BODY}" -w '%{http_code}' -X POST -H "Authorization: Bearer ${ID}" \
             "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${ESC}")
           echo "- OIDC exchange: HTTP ${CODE}" >> "$GITHUB_STEP_SUMMARY"
-          case "${CODE}" in 2??) ;; *) echo "::error::OIDC 交換が HTTP ${CODE}。npm の trusted publisher 登録（repo・publish.yml・npm-publish）を確認"; exit 1 ;; esac
+          case "${CODE}" in
+            2??) rm -f "${BODY}" ;;  # 成功時の本文は公開用の短命トークンを含むので出さない
+            *)
+              # 失敗時の本文は npm のエラーの説明だけ（秘密を含まない）。原因の切り分けのために出す
+              echo "::error::OIDC 交換が HTTP ${CODE}: $(head -c 500 "${BODY}" | tr -d '\r\n')"
+              # ID トークンの claim（秘密ではない部分）も切り分けのために出す
+              node -e 'const p=JSON.parse(Buffer.from(process.argv[1].split(".")[1],"base64url"));for(const k of ["repository","workflow_ref","job_workflow_ref","environment","ref","event_name","aud"])console.log(k+": "+p[k])' "${ID}"
+              rm -f "${BODY}"; exit 1 ;;
+          esac
 
       - name: publish
         working-directory: ${{ runner.temp }}/pack
