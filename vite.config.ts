@@ -13,6 +13,8 @@ const packageJson = JSON.parse(
 const isPackageBuild = process.env.BUILD_MODE === 'package';
 
 export default defineConfig({
+  // デモはサブパスに置かれるので、本体 JS をサイト直下の絶対パスで指さない
+  base: isPackageBuild ? undefined : './',
   build: isPackageBuild
     ? {
         lib: {
