@@ -11,6 +11,8 @@
 - **記号を含む入力で例外にならなくなりました**: 記号（`?`・括弧など）はその字として照合されるため、記号を含む検索は例外ではなく 0 件を返します（#14 項目 1）。
 - **Input containing symbols no longer raises an exception**: Symbols such as `?` or parentheses are matched as the characters they are, so a search containing them returns 0 results instead of raising an exception (#14 item 1).
 - **デモの Service Worker が第三者の配信元から読まなくなりました**: workbox を CDN から読むのをやめてデモと一緒に配り、事前キャッシュから bootstrap の CDN の URL を外しました。デモをオフラインで開くと bootstrap の見た目は当たりません。
+- **公開デモの本体 JS が読めるようになりました**: デモの本体 JS をサイト直下の絶対パスで指していたため、`/Harumi/` の下では 404 になり、デモが動いていませんでした。ページからの相対パスで読みます。
+- **The public demo loads its script again**: The demo pointed at its script with a path from the site root, which returned 404 under `/Harumi/`, so the demo did not run. It now uses a path relative to the page.
 - **The demo service worker no longer loads from third-party hosts**: Workbox is now served with the demo instead of being imported from a CDN, and the bootstrap CDN URLs are gone from the precache. When the demo is opened offline, the bootstrap styles do not apply.
 
 ## [1.0.1] - 2026-10-05
