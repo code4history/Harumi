@@ -1,4 +1,5 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.2/workbox-sw.js');
+importScripts('./workbox/workbox-sw.js');
+workbox.setConfig({ modulePathPrefix: './workbox/' });
 
 workbox.core.skipWaiting();
 
@@ -27,10 +28,8 @@ workbox.routing.registerRoute(
 workbox.precaching.precacheAndRoute([
   // html
   'index.html',
-  // js（harumi 本体はページの JS に同梱しているため事前キャッシュしない。存在しない unpkg の URL が残ると install 全体が失敗していた）
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js',
-  // css
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
+  // harumi 本体はページの JS に同梱しているため事前キャッシュしない。存在しない unpkg の URL が残ると install 全体が失敗していた
+  // bootstrap はページが integrity 付きで CDN から読む。Service Worker には第三者の URL を持たせない
   // font
   'fonts/genkai-sub.woff',
   'fonts/genkai-sub.woff2',

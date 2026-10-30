@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
+import { copyWorkboxPlugin } from './scripts/vite-plugin-copy-workbox.mjs';
 
 // package.json を読み込む
 const packageJson = JSON.parse(
@@ -36,7 +37,8 @@ export default defineConfig({
           }
         }
       },
-  plugins: [dts()],
+  // デモの Service Worker が読む workbox を public/workbox/ に写す。package ビルドには public/ を使わない
+  plugins: [dts(), ...(isPackageBuild ? [] : [copyWorkboxPlugin()])],
   json: {
     stringify: true // JSONをstringifyして含める
   },
