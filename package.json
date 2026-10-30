@@ -62,7 +62,8 @@
     "typescript": "^6.0.3",
     "vite": "^7.3.5",
     "vite-plugin-dts": "^5.1.0",
-    "vitest": "^5.0.4"
+    "vitest": "^5.0.4",
+    "workbox-build": "^7.4.1"
   },
   "dependencies": {
     "jsonpath-plus": "^10.3.0"

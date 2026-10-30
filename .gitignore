@@ -104,3 +104,6 @@ dist
 .tern-port
 
 .idea
+
+# Copied by scripts/vite-plugin-copy-workbox.mjs
+public/workbox/
