@@ -19,5 +19,6 @@ overrides:
   # 14 にもあるので、親に限って 14 へ上げる（14 は minimatch 11 を引く）
   "workbox-build>glob": "^14.0.2"
   "js-beautify>glob": "^14.0.2"
-  # 上の minimatch: "^9.0.7" が glob 14 の minimatch まで 9 系へ寄せるので、glob の下は 11 系へ戻す
-  "glob>minimatch": "^11.0.1"
+  # 上の minimatch: "^9.0.7" が glob 14 の minimatch まで 9 系へ寄せるので、glob 14 の下は 11 系へ戻す。
+  # glob 10・11 は minimatch 11 と組めないので、親の版を 14 に限る
+  "glob@14>minimatch": "^11.0.1"

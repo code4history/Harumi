@@ -13,7 +13,7 @@ overrides:
   '@typescript-eslint/typescript-estree>minimatch': ^11.0.1
   workbox-build>glob: ^14.0.2
   js-beautify>glob: ^14.0.2
-  glob>minimatch: ^11.0.1
+  glob@14>minimatch: ^11.0.1
 
 importers:
 
