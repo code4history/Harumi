@@ -61,7 +61,7 @@ export default defineConfig({
     strictPort: true
   },
   // publicDir は Pages（SPA）ビルドのための機構。package ビルドの成果物（npm の tarball）へ
-  // デモの public/ を混ぜない（m12 SR-NOV26-D-05）。
+  // デモの public/ を混ぜない。
   publicDir: isPackageBuild ? false : 'public',
   appType: 'spa',
   define: {

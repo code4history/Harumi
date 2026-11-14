@@ -147,7 +147,7 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 | --- | --- | --- |
 | `nengo`・`year`・`eto` | なし | 和暦・西暦・干支を入れる欄の id。先頭の `#` は付けても付けなくてもよい |
 | `trigger-label`（`triggerLabel`） | `元` | 起動ボタンの文字 |
-| `shortcut` | `true` | Ctrl+J / ⌘J で開閉するか |
+| `shortcut` | `true` | Ctrl+J / ⌘J で開くか |
 | `max-candidates`（`maxCandidates`） | `100` | 一度に並べる候補の数（1 以上）。超えた分は件数だけ出す |
 | `dock-breakpoint`（`dockBreakpoint`） | `560` | 画面の幅（px）がこれ未満なら、欄のすぐ下に画面幅いっぱいで出す |
 | `show-conditions`（`showConditions`） | `true` | 条件欄を出すか |
@@ -171,7 +171,7 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 - `fields`: いま受け持っている欄（`{ nengo, year, eto }`。無い役は `null`）。
 - `isOpen`: ポップアップが開いているか。
 - `open(欄)`・`close()`・`toggle(欄)`: 受け持つ欄を起点に開く・閉じる・開閉する。`close({ refocus: true })` で欄へ戻る。
-- `attach({ nengo, year, eto })`: 欄を要素かセレクタで指定します。セレクタは `document.querySelector` で探します（影の中の欄は要素を渡してください）。渡した役だけを置き換え、ほかの役はそのままです。要素がページに入っていなければ `document.body` の末尾へ入れます。
+- `attach({ nengo, year, eto })`: 欄を要素かセレクタで指定します。セレクタは `document.querySelector` で探します（影の中の欄は要素を渡してください）。渡した役だけを置き換え、ほかの役はそのままです。要素がページに入っていなければ `document.body` の末尾へ入れます。置き換えるのは、`<input>` か `<textarea>` の要素に解決できた役だけです。値が無い（`null`・`undefined`）、セレクタに一致する要素が無い、見つかった要素が `<input>` と `<textarea>` のどちらでもないときは、その役はいまのまま残ります。1 つも置き換わらないときは何もせずに戻ります（要素をページに入れず、listener の付け替えもしません）。同じ欄をもう一度渡したときは、その役は同じ欄のままです（listener の同期だけ行います）。
 - `detach(欄)`: 欄を外します。省略するとすべて外します。
 - `destroy()`: すべて外し、要素もページから取り除きます。
 
@@ -192,7 +192,15 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 要素で受け取ります（bubbles あり）。
 
 - `harumiOpen`: ポップアップが開いた後（`detail.field` は開いた欄）。
-- `harumiClose`: ポップアップが閉じた後（`detail.field`）。候補を選んだとき・Esc・×・外側のクリック・利用者が欄へ戻ったときに起きます。
+- `harumiClose`: ポップアップが閉じた後（`detail.field` は開いていた欄）。開いていたときにだけ出ます。出るのは次のときです。
+  - 候補を選んだとき（`harumiCommit` の後）
+  - Esc を押したとき（字の欄・条件欄から）
+  - 「×」を押したとき
+  - 起動ボタンで閉じたとき
+  - ポップアップ・起動ボタン・開いた欄の外側をマウスで押したとき
+  - 利用者が取り付けた欄へフォーカスを戻したとき
+  - スクリプトから `close()` を呼んだとき
+  - `detach()`・`destroy()`・`attach()` での別の欄への置き換え・`nengo`・`year`・`eto` の属性やプロパティの付け替え・要素をページから外すことで、開いていた欄が外れたとき、または受け持つ欄が 1 つもなくなったとき
 - `harumiCommit`: 欄へ値を入れた後、閉じる前（`detail.result` は選んだ候補、`detail.fields` は組の欄）。
 
 それぞれの欄では、ふつうの入力と同じく `input` と `change` が起きます。値は要素の元の `value` の setter で入れるので、React の制御された欄（`value` と `onChange`）にも変化が届きます。
