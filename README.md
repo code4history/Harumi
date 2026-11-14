@@ -87,31 +87,36 @@ interface SearchResult {
 }
 ```
 
-### Input helper for form fields (HarumiIME)
+### Input helper for form fields (`<harumi-picker>`)
 
-`HarumiIME` adds a popup to your page's form fields that lets users pick an era from the characters they could read. Its look and keyboard handling match NagaIME in the sibling project [Nagarjuna](https://github.com/code4history/Nagarjuna).
+`<harumi-picker>` adds a popup to your page's form fields that lets users pick an era from the characters they could read. Its look and keyboard handling match `<naga-ime>` in the sibling project [Nagarjuna](https://github.com/code4history/Nagarjuna).
 
 - When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac).
 - Type the characters you could read to list candidate eras. Open "条件" (conditions) to set the year range, extended matching, and the 戊/戌 and 己/巳 equivalence.
 - Picking a candidate (click, Enter, or a number key) writes the Japanese era (e.g. `寛永1`), the Western year (`1624`) and the sexagenary cycle (`甲子`) into their fields, replacing the old values, and closes the popup.
 
-The page decides which field receives which value by attaching them as a group. Any one field is enough.
+One element serves one group of fields. Give the ids of the era (`nengo`), year (`year`) and cycle (`eto`) fields as attributes. Any one of them is enough.
 
-```javascript
-import { HarumiIME } from '@c4h/harumi';
+```html
+<script type="module">import '@c4h/harumi';</script>
 
-const ime = new HarumiIME();
-ime.attach({ nengo: '#nengo', year: '#seireki', eto: '#eto' });
-
-// One group per table row, for example
-document.querySelectorAll('tr').forEach((tr) => {
-  ime.attach({ nengo: tr.querySelector('.nengo'), year: tr.querySelector('.year') });
-});
+<input id="nengo"> <input id="seireki"> <input id="eto">
+<harumi-picker nengo="nengo" year="seireki" eto="eto"></harumi-picker>
 ```
 
-Options (all optional): `triggerLabel` (default `'元'`), `shortcut` (default `true`), `searchOptions` (initial search options, same as `ambiguousSearch`), `showConditions` (default `true`), `maxCandidates` (default 100), `dockBreakpoint` (dock to the bottom below this width in px, default 560), and `onSelect(result, group)`.
+Use one element per group (for example, per table row). You can also create it from script:
 
-Each filled field fires bubbling `input` and `change` events, so React and Vue bindings see the change. Use `ime.detach(field)` to detach fields and `ime.destroy()` to remove everything.
+```javascript
+import { HarumiPicker } from '@c4h/harumi';
+
+const picker = new HarumiPicker({ searchOptions: { range: '1600-1868' } });
+picker.attach({ nengo: '#nengo', year: document.querySelector('#seireki') });
+picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
+```
+
+Attributes (property names in parentheses; all optional): `nengo`, `year`, `eto` (field ids), `trigger-label` (`triggerLabel`, default `元`), `shortcut` (default `true`), `max-candidates` (`maxCandidates`, default 100), `dock-breakpoint` (`dockBreakpoint`, default 560), `show-conditions` (`showConditions`, default `true`), and the initial search conditions `range` (e.g. `1600-1700`), `over-match` (`overMatch`), `tsuchinoe-inu` (`tsuchinoeInu`), `tsuchinoto-mi` (`tsuchinotoMi`). The `searchOptions` property reads or sets them all at once.
+
+Events on the element: `harumiOpen` and `harumiClose` (`detail.field`), and `harumiCommit` (`detail.result` is the picked candidate, `detail.fields` the group's fields). Each filled field fires bubbling `input` and `change` events, so React and Vue bindings see the change. Use `picker.detach(field)` to detach fields and `picker.destroy()` to remove everything.
 
 ### Example use cases
 

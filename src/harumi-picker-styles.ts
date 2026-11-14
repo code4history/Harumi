@@ -1,22 +1,41 @@
 /**
- * HarumiIME 専用の style。
+ * `<harumi-picker>` の style。影の中に `<style data-harumi-style>` を 1 つ置く（document.head には入れない）。
  *
- * 見た目は兄弟プロダクト Nagarjuna の NagaIME（Nagarjuna/src/lib/ime/naga-styles.ts）に合わせる。
- * - selector はすべて `.harumi-` で始め、NagaIME と同じページに置いても衝突させない。
- * - global `:root` へ custom property を足さない。`--harumi-*` は popup / trigger の要素上だけに置く。
- * - NagaIME との差分は、タブ帯の代わりの見出し・条件欄・候補行の表示内容だけ。
+ * 見た目は兄弟プロダクト Nagarjuna の `<naga-ime>`（Nagarjuna/src/lib/ime/naga-styles.ts）に合わせる。
+ * - selector は `.harumi-` か `:host` で始める。
+ * - 影の中の最上位 `.harumi-root` に `all: initial` を当て、ページの継承性質を断つ。
+ * - 寸法は px で書く（ページの `html { font-size }` に引きずられないため）。
+ * - NagaIME との差分は、タブ帯の代わりの見出し・条件欄・候補行の表示内容と、挿入位置の縦棒が無いこと
+ *   （欄の値をまるごと置き換えるので、挿入位置が無い）。
+ * - dock 時の各行の高さは harumi-picker.ts の DOCK_*_PX と一致させる。
  */
 export const HARUMI_STYLE_TEXT = `
+:host {
+  display: contents;
+}
+:host([hidden]) {
+  display: none;
+}
+.harumi-root {
+  all: initial;
+  display: contents;
+  direction: ltr;
+}
+
 .harumi-popup,
 .harumi-trigger {
   --harumi-accent: #5b4a8a;
 }
 
 .harumi-popup[hidden],
-.harumi-trigger[hidden] {
+.harumi-trigger[hidden],
+.harumi-search-row[hidden],
+.harumi-conditions[hidden],
+.harumi-list[hidden] {
   display: none !important;
 }
 
+/* 起動ボタンと popup は文書の座標で置く（top/left に文書座標を書く。NagaIME と同じ）。 */
 .harumi-trigger {
   position: absolute;
   z-index: 9998;
@@ -73,24 +92,33 @@ export const HARUMI_STYLE_TEXT = `
   border-bottom: 2px solid var(--harumi-accent);
   white-space: nowrap;
 }
-.harumi-close {
+.harumi-close,
+.harumi-fold {
   flex: none;
   border: none;
   background: none;
-  font-size: 18px;
   line-height: 1;
   padding: 0 12px;
   cursor: pointer;
-  color: #999;
   border-left: 1px solid #eee;
+}
+.harumi-close {
+  font-size: 18px;
+  color: #999;
 }
 .harumi-close:hover {
   color: #333;
   background: #f5f5f5;
 }
+.harumi-fold {
+  display: none;
+  font-size: 16px;
+  color: #666;
+}
 
 .harumi-search-row {
-  display: contents;
+  display: flex;
+  flex: none;
 }
 .harumi-search-label {
   display: none;
@@ -101,7 +129,8 @@ export const HARUMI_STYLE_TEXT = `
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  flex: none;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .harumi-search:focus {
   outline: 2px solid var(--harumi-accent);
@@ -118,6 +147,7 @@ export const HARUMI_STYLE_TEXT = `
   cursor: pointer;
   color: var(--harumi-accent);
   padding: 2px 0;
+  line-height: 18px;
 }
 .harumi-conditions-body {
   display: flex;
@@ -131,7 +161,7 @@ export const HARUMI_STYLE_TEXT = `
   gap: 4px;
 }
 .harumi-range input {
-  width: 4.5em;
+  width: 56px;
   padding: 2px 4px;
   font-size: 13px;
   border: 1px solid #ccc;
@@ -179,7 +209,7 @@ export const HARUMI_STYLE_TEXT = `
 .harumi-nengo {
   font-size: 20px;
   line-height: 1.2;
-  min-width: 4.5em;
+  min-width: 90px;
   flex: none;
 }
 .harumi-meta {
@@ -220,10 +250,17 @@ export const HARUMI_STYLE_TEXT = `
   background: #fafafa;
 }
 
-/* モバイル dock（NagaIME と同じ割り付け）。ここから下は .harumi-is-docked スコープに閉じる。 */
+/*
+ * 狭幅（dock）。ここから下は .harumi-popup.harumi-is-docked スコープに閉じる（PC 非影響）。
+ * 欄のすぐ下に、文書の可視幅いっぱいの板として出す（NagaIME と同じ）。
+ * --harumi-dock-max は positionPopup() が visualViewport の実測から毎回設定する。
+ */
 .harumi-popup.harumi-is-docked {
-  border-radius: 12px 12px 0 0;
-  max-height: var(--harumi-dock-max, 260px);
+  border: none;
+  border-top: 2px solid var(--harumi-accent);
+  border-radius: 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+  max-height: var(--harumi-dock-max, 226px);
 }
 .harumi-popup.harumi-is-docked .harumi-list {
   flex: 1 1 auto;
@@ -236,21 +273,28 @@ export const HARUMI_STYLE_TEXT = `
   display: none;
 }
 .harumi-popup.harumi-is-docked .harumi-titlebar {
+  box-sizing: border-box;
+  height: 34px;
   background: #fafafa;
   border-bottom: 1px solid #e2e2e2;
 }
 .harumi-popup.harumi-is-docked .harumi-title {
-  padding: 9px 12px;
+  padding: 0 10px;
   font-size: 15px;
+  line-height: 31px;
 }
-.harumi-popup.harumi-is-docked .harumi-close {
+.harumi-popup.harumi-is-docked .harumi-close,
+.harumi-popup.harumi-is-docked .harumi-fold {
   padding: 0 14px;
 }
+.harumi-popup.harumi-is-docked .harumi-fold {
+  display: block;
+}
 .harumi-popup.harumi-is-docked .harumi-search-row {
-  display: flex;
+  box-sizing: border-box;
+  height: 30px;
   align-items: stretch;
-  flex: none;
-  margin: 6px 8px 4px;
+  margin: 3px 8px;
   border: 1px solid #ccc;
   border-left: 3px solid var(--harumi-accent);
   border-radius: 6px;
@@ -269,28 +313,26 @@ export const HARUMI_STYLE_TEXT = `
   border-right: 1px solid #e4dff2;
 }
 .harumi-popup.harumi-is-docked .harumi-search {
-  flex: 1 1 auto;
-  min-width: 0;
+  box-sizing: border-box;
   margin: 0;
   border: none;
   border-radius: 0;
   font-size: 16px; /* iOS の focus 時自動ズームを避ける下限 */
-  padding: 7px 10px;
+  line-height: 20px;
+  padding: 4px 10px;
+}
+.harumi-popup.harumi-is-docked .harumi-search:focus {
+  outline-offset: -2px;
+}
+.harumi-popup.harumi-is-docked .harumi-conditions {
+  margin: 0 8px 2px;
 }
 .harumi-popup.harumi-is-docked .harumi-item {
   box-sizing: border-box;
-  min-height: 44px;
+  height: 44px;
   padding: 5px 10px;
 }
 `;
 
-const STYLE_ATTRIBUTE = 'data-harumi-style';
-
-/** 文書に HarumiIME の style が無ければ 1 つだけ入れる（複数インスタンスで共有する）。 */
-export function ensureHarumiStyle(doc: Document = document): void {
-  if (doc.head.querySelector(`style[${STYLE_ATTRIBUTE}]`)) return;
-  const style = doc.createElement('style');
-  style.setAttribute(STYLE_ATTRIBUTE, '');
-  style.textContent = HARUMI_STYLE_TEXT;
-  doc.head.appendChild(style);
-}
+/** 影の中の `<style>` に付ける印（テストが引く）。 */
+export const HARUMI_STYLE_ATTRIBUTE = 'data-harumi-style';
