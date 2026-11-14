@@ -58,7 +58,7 @@
     <link rel="apple-touch-startup-image" href="icons/apple-splash-1334-750.jpg" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
     <link rel="apple-touch-startup-image" href="icons/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="icons/apple-splash-1136-640.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
-    <script type="module" crossorigin src="./assets/main.Q7sgHaNV.js"></script>
+    <script type="module" crossorigin src="./assets/main.BJD30EoF.js"></script>
   </head>
   <body>
     <h1 class="display-3"><span class="genkai">春海</span>: 年号推定フォーム</h1>
@@ -111,6 +111,26 @@
       </div>
     </div>
     <ul class="list-group" id="lists"></ul>
+    <section class="mt-5 mb-3" id="ime_demo">
+      <h2 class="h3">入力補助（&lt;harumi-picker&gt;）</h2>
+      <p class="lead">欄にフォーカスすると右上に「元」のボタンが出ます（Ctrl+J / ⌘J でも開けます）。読み取れた字を入れて候補を選ぶと、和暦・西暦・干支がそれぞれの欄に入ります。</p>
+      <div class="row g-3">
+        <div class="col-auto">
+          <label for="ime_nengo" class="form-label">和暦</label>
+          <input type="text" class="form-control" id="ime_nengo" placeholder="例: 寛永1">
+        </div>
+        <div class="col-auto">
+          <label for="ime_year" class="form-label">西暦</label>
+          <input type="text" class="form-control" id="ime_year" placeholder="例: 1624">
+        </div>
+        <div class="col-auto">
+          <label for="ime_eto" class="form-label">干支</label>
+          <input type="text" class="form-control" id="ime_eto" placeholder="例: 甲子">
+        </div>
+      </div>
+      <!-- 和暦・西暦・干支の欄の id を指定するだけで動く -->
+      <harumi-picker nengo="ime_nengo" year="ime_year" eto="ime_eto"></harumi-picker>
+    </section>
     <div class="mb-3 row float-end">
       <div class="col-auto">
         ©<span class="genkai">Code for History️</span>
