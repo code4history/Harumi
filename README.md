@@ -194,7 +194,7 @@ Dispatched on the element (they bubble).
 - `harumiOpen`: After the popup opens (`detail.field` is the field it was opened from).
 - `harumiClose`: After the popup closes (`detail.field` is the field it was opened from). It fires only when the popup was open, in these cases:
   - when a candidate is picked (after `harumiCommit`),
-  - on Esc (from the character field, the conditions panel, or an attached field),
+  - on Esc (from the character field or the conditions panel),
   - on the × button,
   - when the trigger button closes it,
   - on a mouse press outside the popup, the trigger button and the field it was opened from,

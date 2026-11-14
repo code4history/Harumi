@@ -194,7 +194,7 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 - `harumiOpen`: ポップアップが開いた後（`detail.field` は開いた欄）。
 - `harumiClose`: ポップアップが閉じた後（`detail.field` は開いていた欄）。開いていたときにだけ出ます。出るのは次のときです。
   - 候補を選んだとき（`harumiCommit` の後）
-  - Esc を押したとき（字の欄・条件欄・取り付けた欄のどれからでも）
+  - Esc を押したとき（字の欄・条件欄から）
   - 「×」を押したとき
   - 起動ボタンで閉じたとき
   - ポップアップ・起動ボタン・開いた欄の外側をマウスで押したとき

@@ -104,7 +104,7 @@ export interface HarumiPickerFields {
 export interface HarumiPickerOptions {
   /** 起動ボタンに表示する文字。既定は '元'。 */
   triggerLabel?: string;
-  /** Ctrl+J / Cmd+J で開閉するか。既定は true。 */
+  /** Ctrl+J / Cmd+J で開くか。既定は true。 */
   shortcut?: boolean;
   /** 一度に表示する候補の最大件数。既定は 100。 */
   maxCandidates?: number;
@@ -453,7 +453,7 @@ export class HarumiPicker extends BaseElement {
     this.setTriggerLabel(stringFromValue(value) ?? DEFAULT_TRIGGER_LABEL);
   }
 
-  /** Ctrl+J / Cmd+J で開閉するか。既定は true。 */
+  /** Ctrl+J / Cmd+J で開くか。既定は true。 */
   get shortcut(): boolean {
     return this.cfgShortcut;
   }
