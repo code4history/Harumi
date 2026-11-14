@@ -63,3 +63,5 @@ export function ambiguousSearch(text: string, options: SearchOptions = {}): Sear
 }
 
 export type { SearchOptions, SearchResult };
+export { HarumiIME } from './harumi-ime';
+export type { HarumiIMEOptions, HarumiIMETargets, HarumiIMEGroup, HarumiField } from './harumi-ime';

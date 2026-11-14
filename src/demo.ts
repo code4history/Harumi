@@ -1,4 +1,4 @@
-import { ambiguousSearch, SearchOptions, SearchResult } from './index';
+import { ambiguousSearch, HarumiIME, SearchOptions, SearchResult } from './index';
 
 // グローバルに公開
 window.Harumi = { ambiguousSearch };
@@ -8,6 +8,9 @@ document.getElementById('version')!.textContent = import.meta.env.APP_VERSION;
 
 // イベントリスナーの設定
 document.addEventListener("DOMContentLoaded", () => {
+  // 入力補助のデモ: 和暦・西暦・干支の 3 欄を 1 組として取り付ける
+  new HarumiIME().attach({ nengo: "#ime_nengo", year: "#ime_year", eto: "#ime_eto" });
+
   document.querySelector("#do_search")!.addEventListener("click", () => {
     const era_text = (document.querySelector("#era_text") as HTMLInputElement).value;
     if (era_text === "") {

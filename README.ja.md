@@ -87,6 +87,41 @@ interface SearchResult {
 }
 ```
 
+### 入力欄の補助（HarumiIME）
+
+ページの入力欄に、読み取れた字から元号を選んで入れる補助を付けられます。見た目と操作は兄弟プロダクト [Nagarjuna](https://github.com/code4history/Nagarjuna) の入力補助（NagaIME）と同じです。
+
+- 取り付けた欄にフォーカスすると、欄の右上に「元」のボタンが出ます。ボタンか Ctrl+J（Mac は ⌘J）で開きます。
+- 読み取れた字を入れると元号の候補が並びます。「条件」を開くと、西暦の範囲・延長マッチ・戊と戌／己と巳の同一視を変えられます。
+- 候補を選ぶと（クリック・Enter・数字キー）、和暦・西暦・干支をそれぞれの欄に入れて閉じます。欄の値は置き換わります。
+
+和暦・西暦・干支のどの欄に入れるかは、ページの側で 1 組として指定します。少なくとも 1 つあれば動きます。
+
+```javascript
+import { HarumiIME } from '@c4h/harumi';
+
+const ime = new HarumiIME();
+// 和暦の欄に「寛永1」、西暦の欄に「1624」、干支の欄に「甲子」が入る
+ime.attach({ nengo: '#nengo', year: '#seireki', eto: '#eto' });
+
+// 表の行ごとなど、組が複数あれば組ごとに attach する
+document.querySelectorAll('tr').forEach((tr) => {
+  ime.attach({ nengo: tr.querySelector('.nengo'), year: tr.querySelector('.year') });
+});
+```
+
+オプション（すべて省略可）:
+
+- `triggerLabel`: 起動ボタンの文字（既定は `'元'`）
+- `shortcut`: Ctrl+J / ⌘J で開閉するか（既定は `true`）
+- `searchOptions`: 検索条件の初期値（`ambiguousSearch` のオプションと同じ）
+- `showConditions`: 条件欄を出すか（既定は `true`）
+- `maxCandidates`: 一度に並べる候補の数（既定は 100）
+- `dockBreakpoint`: この幅（px）未満では画面下部に出す（既定は 560）
+- `onSelect(result, group)`: 欄へ入れた直後に呼ぶ関数
+
+欄へ入れたときは、それぞれの欄で `input` と `change` を発火します（React や Vue の束縛にも届きます）。外すときは `ime.detach(欄)`、すべて片付けるときは `ime.destroy()` を呼びます。
+
 ### ユースケース例
 
 石碑の年号が部分的にしか判読できない場合の年代推定：

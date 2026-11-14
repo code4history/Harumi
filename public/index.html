@@ -110,6 +110,24 @@
       </div>
     </div>
     <ul class="list-group" id="lists"></ul>
+    <section class="mt-5 mb-3" id="ime_demo">
+      <h2 class="h3">入力補助（HarumiIME）</h2>
+      <p class="lead">欄にフォーカスすると右上に「元」のボタンが出ます（Ctrl+J / ⌘J でも開けます）。読み取れた字を入れて候補を選ぶと、和暦と西暦がそれぞれの欄に入ります。</p>
+      <div class="row g-3">
+        <div class="col-auto">
+          <label for="ime_nengo" class="form-label">和暦</label>
+          <input type="text" class="form-control" id="ime_nengo" placeholder="例: 寛永1">
+        </div>
+        <div class="col-auto">
+          <label for="ime_year" class="form-label">西暦</label>
+          <input type="text" class="form-control" id="ime_year" placeholder="例: 1624">
+        </div>
+        <div class="col-auto">
+          <label for="ime_eto" class="form-label">干支</label>
+          <input type="text" class="form-control" id="ime_eto" placeholder="例: 甲子">
+        </div>
+      </div>
+    </section>
     <div class="mb-3 row float-end">
       <div class="col-auto">
         ©<span class="genkai">Code for History️</span>

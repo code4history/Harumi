@@ -87,6 +87,32 @@ interface SearchResult {
 }
 ```
 
+### Input helper for form fields (HarumiIME)
+
+`HarumiIME` adds a popup to your page's form fields that lets users pick an era from the characters they could read. Its look and keyboard handling match NagaIME in the sibling project [Nagarjuna](https://github.com/code4history/Nagarjuna).
+
+- When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac).
+- Type the characters you could read to list candidate eras. Open "条件" (conditions) to set the year range, extended matching, and the 戊/戌 and 己/巳 equivalence.
+- Picking a candidate (click, Enter, or a number key) writes the Japanese era (e.g. `寛永1`), the Western year (`1624`) and the sexagenary cycle (`甲子`) into their fields, replacing the old values, and closes the popup.
+
+The page decides which field receives which value by attaching them as a group. Any one field is enough.
+
+```javascript
+import { HarumiIME } from '@c4h/harumi';
+
+const ime = new HarumiIME();
+ime.attach({ nengo: '#nengo', year: '#seireki', eto: '#eto' });
+
+// One group per table row, for example
+document.querySelectorAll('tr').forEach((tr) => {
+  ime.attach({ nengo: tr.querySelector('.nengo'), year: tr.querySelector('.year') });
+});
+```
+
+Options (all optional): `triggerLabel` (default `'元'`), `shortcut` (default `true`), `searchOptions` (initial search options, same as `ambiguousSearch`), `showConditions` (default `true`), `maxCandidates` (default 100), `dockBreakpoint` (dock to the bottom below this width in px, default 560), and `onSelect(result, group)`.
+
+Each filled field fires bubbling `input` and `change` events, so React and Vue bindings see the change. Use `ime.detach(field)` to detach fields and `ime.destroy()` to remove everything.
+
 ### Example use cases
 
 Estimating a date when the era name on a stone monument is only partially legible:
