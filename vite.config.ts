@@ -40,7 +40,18 @@ export default defineConfig({
         }
       },
   // デモの Service Worker が読む workbox を public/workbox/ に写す。package ビルドには public/ を使わない
-  plugins: [dts(), ...(isPackageBuild ? [] : [copyWorkboxPlugin()])],
+  plugins: [
+    dts({
+      // <harumi-picker> の型は DOM の型（HTMLElement など）を使う。tsconfig の lib に DOM を入れていない
+      // 利用者（Node 向けの設定など）でも型エラーにならないよう、型定義の先頭で DOM の lib を引く。
+      // ソースに書いた `/// <reference lib>` は型定義の出力で落ちるため、書き出すときに足す。
+      beforeWriteFile: (filePath, content) =>
+        filePath.endsWith('harumi-picker.d.ts')
+          ? { filePath, content: `/// <reference lib="dom" />\n${content}` }
+          : undefined,
+    }),
+    ...(isPackageBuild ? [] : [copyWorkboxPlugin()]),
+  ],
   json: {
     stringify: true // JSONをstringifyして含める
   },

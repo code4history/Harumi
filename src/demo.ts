@@ -1,4 +1,6 @@
 import { ambiguousSearch, SearchOptions, SearchResult } from './index';
+// <harumi-picker> を登録する（デモの入力補助）
+import './harumi-picker';
 
 // グローバルに公開
 window.Harumi = { ambiguousSearch };

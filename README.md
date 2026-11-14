@@ -87,6 +87,115 @@ interface SearchResult {
 }
 ```
 
+### Input helper for form fields (`<harumi-picker>`)
+
+`<harumi-picker>` adds a popup to your page's form fields that lets users pick an era from the characters they could read. Its look and keyboard handling match `<naga-ime>` in the sibling project [Nagarjuna](https://github.com/code4history/Nagarjuna). Available from `1.2.0`.
+
+- When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac).
+- Type the characters you could read to list candidate eras. Open "条件" (conditions) to change the search conditions (see "Conditions" below).
+- Picking a candidate (click, Enter, or a number key) writes the Japanese era (e.g. `寛永1`), the Western year (`1624`) and the sexagenary cycle (`甲子`) into their fields, replacing the old values, closes the popup and returns focus to the field it was opened from.
+
+One element serves one group of fields. Give the ids of the era (`nengo`), year (`year`) and cycle (`eto`) fields as attributes. Any one of them is enough. Use one element per group (for example, per table row).
+
+#### Loading
+
+With npm and a bundler (Vite, webpack, etc.), importing the package registers `<harumi-picker>`.
+
+```javascript
+// pnpm add @c4h/harumi
+import '@c4h/harumi';
+```
+
+```html
+<input id="nengo"> <input id="seireki"> <input id="eto">
+<harumi-picker nengo="nengo" year="seireki" eto="eto"></harumi-picker>
+```
+
+Without a bundler, load it from a CDN with a pinned version. The ESM build works from either unpkg or jsDelivr.
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/@c4h/harumi@1.2.0/dist/harumi.js"></script>
+<!-- or https://unpkg.com/@c4h/harumi@1.2.0/dist/harumi.js -->
+```
+
+Load the UMD build (global name `harumi`) from unpkg. jsDelivr serves `.cjs` files with a type browsers refuse to run, so it does not work for the UMD build.
+
+```html
+<script src="https://unpkg.com/@c4h/harumi@1.2.0/dist/harumi.umd.cjs"></script>
+<script>
+  // <harumi-picker> is registered on load; the search function is harumi.ambiguousSearch
+  console.log(harumi.ambiguousSearch('寛永甲子'));
+</script>
+```
+
+You can also create it from script:
+
+```javascript
+import { HarumiPicker } from '@c4h/harumi';
+
+const picker = new HarumiPicker({ searchOptions: { range: '1600-1868' } });
+picker.attach({ nengo: '#nengo', year: document.querySelector('#seireki') });
+picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
+```
+
+#### Attributes and properties
+
+Attribute values are reflected to properties (property names in parentheses). Reflection is one-way, from attribute to property: assigning a property does not change the attribute. Invalid values silently fall back to the default instead of raising an error.
+
+| Attribute (property) | Default | Meaning |
+| --- | --- | --- |
+| `nengo`, `year`, `eto` | none | Ids of the fields that receive the era, the Western year and the cycle. A leading `#` is optional |
+| `trigger-label` (`triggerLabel`) | `元` | Text of the trigger button |
+| `shortcut` | `true` | Whether Ctrl+J / ⌘J opens and closes the popup |
+| `max-candidates` (`maxCandidates`) | `100` | How many candidates to list at once (1 or more). Only the count of the rest is shown |
+| `dock-breakpoint` (`dockBreakpoint`) | `560` | Below this viewport width (px), the popup appears right under the field at full width |
+| `show-conditions` (`showConditions`) | `true` | Whether to show the conditions panel |
+| `range` | none (no range) | Initial search condition: Western year range |
+| `over-match` (`overMatch`) | `false` | Initial search condition: extended matching |
+| `tsuchinoe-inu` (`tsuchinoeInu`) | `false` | Initial search condition: treat 戊 and 戌 as the same |
+| `tsuchinoto-mi` (`tsuchinotoMi`) | `false` | Initial search condition: treat 己 and 巳 as the same |
+
+Unlike standard HTML boolean attributes, the string `"false"` makes a boolean attribute false. A missing attribute means the default; an empty value, `"true"`, or the attribute's own name means true.
+
+The `searchOptions` property (same shape as the `ambiguousSearch` options) reads or sets all search conditions at once. Reading it returns the current conditions, including changes the user made in the conditions panel. Whichever of attribute, property or panel changed last wins.
+
+#### Conditions
+
+- **Year range**: Both ends are inclusive. Either end may be omitted ("1600〜", "〜1700"). Full-width digits are accepted. As an attribute, write `1600-1700`, `1600-` or `-1700`.
+- **Extended matching** (延長マッチ): After an era change, the old era's years are still listed for two more years (for example, an inscription dated in the old era the year after the change). Such candidates are labeled 延長マッチ.
+- **Treat 戊 and 戌 / 己 and 巳 as the same**: These pairs look alike and are hard to tell apart, so they are matched as the same character.
+
+#### Methods and read-only properties
+
+- `fields`: The fields currently served (`{ nengo, year, eto }`; `null` for a missing role).
+- `isOpen`: Whether the popup is open.
+- `open(field)`, `close()`, `toggle(field)`: Open, close or toggle from a served field. `close({ refocus: true })` returns focus to the field.
+- `attach({ nengo, year, eto })`: Set fields by element or selector. Selectors are looked up with `document.querySelector` (pass the element for fields inside a shadow root). Only the roles you pass are replaced; the others stay. If the element is not in the page, it is appended to the end of `document.body`.
+- `detach(field)`: Detach a field, or all fields when omitted.
+- `destroy()`: Detach everything and remove the element from the page.
+
+#### When fields are looked up
+
+Fields named by id attributes are looked up only:
+
+- when the element is added to the page,
+- at DOMContentLoaded, if it was added while the page was still loading, and
+- when the `nengo`, `year` or `eto` attribute (or property) changes.
+
+Fields rendered later are not found. Set the attribute again, or attach them with `attach()`.
+
+Removing the element from the page detaches its fields. When it is added back, fields named by id attributes are looked up and attached again, but fields attached with `attach()` are not. Call `attach()` again.
+
+#### Events
+
+Dispatched on the element (they bubble).
+
+- `harumiOpen`: After the popup opens (`detail.field` is the field it was opened from).
+- `harumiClose`: After the popup closes (`detail.field`). Fires when a candidate is picked, on Esc, ×, a click outside, or when the user returns to a field.
+- `harumiCommit`: After the values are written and before the popup closes (`detail.result` is the picked candidate, `detail.fields` the group's fields).
+
+Each filled field fires `input` and `change` like normal typing. Values are written through the element's original `value` setter, so controlled React fields (`value` with `onChange`) see the change.
+
 ### Example use cases
 
 Estimating a date when the era name on a stone monument is only partially legible:
