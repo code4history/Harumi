@@ -147,7 +147,7 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 | --- | --- | --- |
 | `nengo`・`year`・`eto` | なし | 和暦・西暦・干支を入れる欄の id。先頭の `#` は付けても付けなくてもよい |
 | `trigger-label`（`triggerLabel`） | `元` | 起動ボタンの文字 |
-| `shortcut` | `true` | Ctrl+J / ⌘J で開閉するか |
+| `shortcut` | `true` | Ctrl+J / ⌘J で開くか |
 | `max-candidates`（`maxCandidates`） | `100` | 一度に並べる候補の数（1 以上）。超えた分は件数だけ出す |
 | `dock-breakpoint`（`dockBreakpoint`） | `560` | 画面の幅（px）がこれ未満なら、欄のすぐ下に画面幅いっぱいで出す |
 | `show-conditions`（`showConditions`） | `true` | 条件欄を出すか |
@@ -196,11 +196,11 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
   - 候補を選んだとき（`harumiCommit` の後）
   - Esc を押したとき（字の欄・条件欄・取り付けた欄のどれからでも）
   - 「×」を押したとき
-  - 起動ボタンか Ctrl+J（Mac は ⌘J）で閉じたとき
-  - ポップアップ・起動ボタン・取り付けた欄の外側をマウスで押したとき
+  - 起動ボタンで閉じたとき
+  - ポップアップ・起動ボタン・開いた欄の外側をマウスで押したとき
   - 利用者が取り付けた欄へフォーカスを戻したとき
   - スクリプトから `close()` を呼んだとき
-  - `detach()`・`destroy()`・`nengo`・`year`・`eto` 属性の付け替え・要素をページから外すことで、開いていた欄が外れたとき、または受け持つ欄が 1 つもなくなったとき
+  - `detach()`・`destroy()`・`attach()` での別の欄への置き換え・`nengo`・`year`・`eto` の属性やプロパティの付け替え・要素をページから外すことで、開いていた欄が外れたとき、または受け持つ欄が 1 つもなくなったとき
 - `harumiCommit`: 欄へ値を入れた後、閉じる前（`detail.result` は選んだ候補、`detail.fields` は組の欄）。
 
 それぞれの欄では、ふつうの入力と同じく `input` と `change` が起きます。値は要素の元の `value` の setter で入れるので、React の制御された欄（`value` と `onChange`）にも変化が届きます。

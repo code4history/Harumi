@@ -4,7 +4,7 @@ import { JSONPath } from 'jsonpath-plus';
 
 // 曖昧検索が受け付ける文字数の上限（空白除去・重複除去の後で数える）。
 // 照合の費用は「候補の数 × 入力の文字数」で伸びるため、サーバー側で呼ばれた場合の
-// DoS を防ぐ目的で設ける（SR-NOV26-A1-1）。
+// DoS を防ぐ目的で設ける。
 const MAX_AMBIGUOUS_CHARS = 64;
 
 export function ambiguousSearch(text: string, options: SearchOptions = {}): SearchResult[] {

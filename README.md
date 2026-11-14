@@ -147,7 +147,7 @@ Attribute values are reflected to properties (property names in parentheses). Re
 | --- | --- | --- |
 | `nengo`, `year`, `eto` | none | Ids of the fields that receive the era, the Western year and the cycle. A leading `#` is optional |
 | `trigger-label` (`triggerLabel`) | `元` | Text of the trigger button |
-| `shortcut` | `true` | Whether Ctrl+J / ⌘J opens and closes the popup |
+| `shortcut` | `true` | Whether Ctrl+J / ⌘J opens the popup |
 | `max-candidates` (`maxCandidates`) | `100` | How many candidates to list at once (1 or more). Only the count of the rest is shown |
 | `dock-breakpoint` (`dockBreakpoint`) | `560` | Below this viewport width (px), the popup appears right under the field at full width |
 | `show-conditions` (`showConditions`) | `true` | Whether to show the conditions panel |
@@ -196,11 +196,11 @@ Dispatched on the element (they bubble).
   - when a candidate is picked (after `harumiCommit`),
   - on Esc (from the character field, the conditions panel, or an attached field),
   - on the × button,
-  - when the trigger button or Ctrl+J (⌘J) closes it,
-  - on a mouse press outside the popup, the trigger button and the attached fields,
+  - when the trigger button closes it,
+  - on a mouse press outside the popup, the trigger button and the field it was opened from,
   - when the user puts focus back into an attached field,
   - when `close()` is called from script,
-  - when a detach — `detach()`, `destroy()`, changing the `nengo`, `year` or `eto` attribute, or removing the element from the page — takes away the field it was opened from, or the last field it serves.
+  - when a detach — `detach()`, `destroy()`, replacing a field with another one through `attach()`, changing the `nengo`, `year` or `eto` attribute or property, or removing the element from the page — takes away the field it was opened from, or the last field it serves.
 - `harumiCommit`: After the values are written and before the popup closes (`detail.result` is the picked candidate, `detail.fields` the group's fields).
 
 Each filled field fires `input` and `change` like normal typing. Values are written through the element's original `value` setter, so controlled React fields (`value` with `onChange`) see the change.
