@@ -195,6 +195,42 @@ describe('<harumi-picker>', () => {
       expect(detail.fields).toEqual({ nengo, year, eto });
     });
 
+    it('React の制御された欄にも変化が届く（元の value の setter を通す）', () => {
+      // React と同じく、インスタンスの上の value で値を記録する。ここを通すと変化を拾えない
+      let tracked = '';
+      const proto = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!;
+      Object.defineProperty(year, 'value', {
+        configurable: true,
+        get() {
+          return proto.get!.call(this);
+        },
+        set(v: string) {
+          tracked = v;
+          proto.set!.call(this, v);
+        },
+      });
+      let changedFromTracker = false;
+      year.addEventListener('input', () => {
+        changedFromTracker = year.value !== tracked;
+      });
+      const picker = mount();
+      picker.open(nengo);
+      typeSearch(picker, '寛永甲子');
+      parts(picker).search.dispatchEvent(key({ key: 'Enter' }));
+      expect(year.value).toBe('1624');
+      expect(tracked).toBe('');
+      expect(changedFromTracker).toBe(true);
+    });
+
+    it('type="number" の欄にも西暦が入る', () => {
+      year.type = 'number';
+      const picker = mount();
+      picker.open(nengo);
+      typeSearch(picker, '寛永甲子');
+      parts(picker).search.dispatchEvent(key({ key: 'Enter' }));
+      expect(year.value).toBe('1624');
+    });
+
     it('片方だけの組でも動き、指定の無い欄には入れない', () => {
       const picker = mount({ year: 'year' });
       picker.open(year);
@@ -282,6 +318,16 @@ describe('<harumi-picker>', () => {
       picker.open(year);
       expect(parts(picker).cond('since').value).toBe('1600');
       expect(parts(picker).cond('till').value).toBe('1700');
+    });
+
+    it('全角の数字の範囲も読む（条件欄・属性とも）', () => {
+      const picker = mount({ nengo: 'nengo', range: '１６００－１７００' });
+      expect(picker.range).toBe('1600-1700');
+      picker.open(nengo);
+      parts(picker).cond('since').value = '１８００';
+      parts(picker).cond('till').value = '';
+      parts(picker).cond('since').dispatchEvent(new Event('input', { bubbles: true }));
+      expect(picker.range).toBe('1800-');
     });
 
     it('条件の属性の初期値が条件欄に入り、検索に効く', () => {

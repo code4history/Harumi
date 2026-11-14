@@ -180,7 +180,7 @@ function stringFromValue(value: unknown): string | undefined {
 /** 範囲は「開始-終了」（どちらか省略可）だけを受け付ける。不正なら ''（範囲なし）。 */
 function rangeFromValue(value: unknown): string {
   if (typeof value !== 'string') return '';
-  const v = value.trim();
+  const v = toHalfWidthDigits(value).trim().replace(/[－ー〜～]/g, '-');
   return /^\d*-\d*$/.test(v) && v !== '-' ? v : '';
 }
 
@@ -217,6 +217,24 @@ function deepActiveElement(): Element | null {
   let ae: Element | null = document.activeElement;
   while (ae && ae.shadowRoot && ae.shadowRoot.activeElement) ae = ae.shadowRoot.activeElement;
   return ae;
+}
+
+/**
+ * 欄の値を、要素の型（HTMLInputElement / HTMLTextAreaElement）の元の value の setter で入れる。
+ * React は制御された欄の value をインスタンスの上で書き換えて値の変化を見張る ∴ `el.value = v` と書くと
+ * React の記録も同時に新しい値になり、続く input で「変化なし」と見なされて onChange が呼ばれない
+ * （次の再描画で元の値に戻る）。元の setter を通せば React の記録は古いままなので、input で変化を拾う。
+ * `setRangeText` は type="number" の欄で例外になるので使わない。
+ */
+function setNativeValue(el: HarumiField, value: string): void {
+  const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value')?.set;
+  if (setter) setter.call(el, value);
+  else el.value = value;
+}
+
+/** 全角の数字を半角にする（「１６００」も範囲として読む）。 */
+function toHalfWidthDigits(value: string): string {
+  return value.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
 }
 
 function copyResult(r: SearchResult): SearchResult {
@@ -903,7 +921,7 @@ export class HarumiPicker extends BaseElement {
 
   /** 条件欄の値から検索条件を作る。範囲は数字以外を捨てる。 */
   private readConditionInputs(): void {
-    const digits = (name: string) => (this.conditionInput(name)?.value ?? '').replace(/[^\d]/g, '');
+    const digits = (name: string) => toHalfWidthDigits(this.conditionInput(name)?.value ?? '').replace(/[^\d]/g, '');
     const since = digits('since');
     const till = digits('till');
     this.conditions = {
@@ -1235,7 +1253,7 @@ export class HarumiPicker extends BaseElement {
     ];
     for (const [el, value] of values) {
       if (!el) continue;
-      el.value = value;
+      setNativeValue(el, value);
       // ネイティブの置き換えと同じ性質の InputEvent。composed なので影の外の React / Vue 等に届く
       el.dispatchEvent(
         new InputEvent('input', { bubbles: true, composed: true, inputType: 'insertReplacementText', data: value }),

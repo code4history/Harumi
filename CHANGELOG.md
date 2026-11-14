@@ -2,6 +2,18 @@
 
 このプロジェクトの主な変更を記録します。版数は [Semantic Versioning](https://semver.org/) に従います。
 
+## [Unreleased]
+
+### Added
+- **入力欄の補助 `<harumi-picker>` を追加しました**: 読み取れた字から元号の候補を出し、選んだ候補の和暦・西暦・干支を、ページの指定した欄へそれぞれ入れるカスタム要素です。見た目と操作は Nagarjuna の `<naga-ime>` に合わせています。使い方は README の「入力欄の補助」を参照してください。
+- **Added the `<harumi-picker>` input helper**: A custom element that lists candidate eras from the characters you could read and writes the picked candidate's era, Western year and sexagenary cycle into the fields the page specifies. Its look and keyboard handling match `<naga-ime>` in Nagarjuna. See "Input helper for form fields" in the README.
+
+### Changed
+- **`index.ts` を分けました**: `ambiguousSearch` の本体を `src/search.ts` へ移しました。`index.ts` は `ambiguousSearch` と `HarumiPicker` を公開する入口だけになります。公開している名前と動作は変わりません。
+- **Split `index.ts`**: The body of `ambiguousSearch` moved to `src/search.ts`, and `index.ts` now only re-exports `ambiguousSearch` and `HarumiPicker`. The exported names and behavior are unchanged.
+- **開発用の依存に jsdom を追加しました**: `<harumi-picker>` のテストのためです。利用者がインストールするものは変わりません。
+- **Added jsdom as a devDependency**: It is used by the `<harumi-picker>` tests. Nothing changes for what users install.
+
 ## [1.1.0] - 2026-11-02
 
 1.1.0-rc.1 と同じ内容の正式版です（版番号のみ変更）。変更点は 1.1.0-rc.1 までの各項を参照してください。

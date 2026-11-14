@@ -89,23 +89,47 @@ interface SearchResult {
 
 ### 入力欄の補助（`<harumi-picker>`）
 
-ページの入力欄に、読み取れた字から元号を選んで入れる補助を付けられます。見た目と操作は、兄弟プロダクト [Nagarjuna](https://github.com/code4history/Nagarjuna) の `<naga-ime>` と同じです。
+ページの入力欄に、読み取れた字から元号を選んで入れる補助を付けられます。見た目と操作は、兄弟プロダクト [Nagarjuna](https://github.com/code4history/Nagarjuna) の `<naga-ime>` と同じです。`1.2.0` から使えます。
 
 - 取り付けた欄にフォーカスすると、欄の右上に「元」のボタンが出ます。ボタンか Ctrl+J（Mac は ⌘J）で開きます。
-- 読み取れた字を入れると元号の候補が並びます。「条件」を開くと、西暦の範囲・延長マッチ・戊と戌／己と巳の同一視を変えられます。
-- 候補を選ぶと（クリック・Enter・数字キー）、和暦・西暦・干支をそれぞれの欄に入れて閉じます。欄の値は置き換わります。
+- 読み取れた字を入れると元号の候補が並びます。「条件」を開くと検索の条件を変えられます（下の「条件欄」）。
+- 候補を選ぶと（クリック・Enter・数字キー）、和暦・西暦・干支をそれぞれの欄に入れて閉じ、開いた欄へ戻ります。欄の値は置き換わります。
 
-1 つの要素が 1 組の欄を受け持ちます。和暦（`nengo`）・西暦（`year`）・干支（`eto`）の欄の id を属性で指定します。少なくとも 1 つあれば動きます。
+1 つの要素が 1 組の欄を受け持ちます。和暦（`nengo`）・西暦（`year`）・干支（`eto`）の欄の id を属性で指定します。少なくとも 1 つあれば動きます。表の行ごとなど、組が複数あるときは組ごとに要素を置きます。
+
+#### 読み込み方
+
+npm とバンドラ（Vite・webpack など）で使う場合は、パッケージを import すると `<harumi-picker>` が登録されます。
+
+```javascript
+// pnpm add @c4h/harumi
+import '@c4h/harumi';
+```
 
 ```html
-<script type="module">import '@c4h/harumi';</script>
-
 <input id="nengo"> <input id="seireki"> <input id="eto">
 <!-- 和暦の欄に「寛永1」、西暦の欄に「1624」、干支の欄に「甲子」が入る -->
 <harumi-picker nengo="nengo" year="seireki" eto="eto"></harumi-picker>
 ```
 
-表の行ごとなど、組が複数あるときは組ごとに要素を置きます。スクリプトから作ることもできます。
+バンドラを使わない場合は CDN から読みます。版は固定してください。ESM 版は unpkg・jsDelivr のどちらからでも読めます。
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/@c4h/harumi@1.2.0/dist/harumi.js"></script>
+<!-- または https://unpkg.com/@c4h/harumi@1.2.0/dist/harumi.js -->
+```
+
+UMD 版（グローバル名は `harumi`）は unpkg から読みます。jsDelivr は `.cjs` のファイルをブラウザが実行しない形式で返すため、UMD 版には使えません。
+
+```html
+<script src="https://unpkg.com/@c4h/harumi@1.2.0/dist/harumi.umd.cjs"></script>
+<script>
+  // <harumi-picker> は読み込んだ時点で登録済み。検索関数は harumi.ambiguousSearch
+  console.log(harumi.ambiguousSearch('寛永甲子'));
+</script>
+```
+
+スクリプトから作ることもできます。
 
 ```javascript
 import { HarumiPicker } from '@c4h/harumi';
@@ -115,22 +139,63 @@ picker.attach({ nengo: '#nengo', year: document.querySelector('#seireki') });
 picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 ```
 
-属性（括弧内はプロパティ名。すべて省略可）:
+#### 属性とプロパティ
 
-- `nengo`・`year`・`eto`: 値を入れる欄の id
-- `trigger-label`（`triggerLabel`）: 起動ボタンの文字。既定は「元」
-- `shortcut`: Ctrl+J / ⌘J で開閉するか。既定は `true`
-- `max-candidates`（`maxCandidates`）: 一度に並べる候補の数。既定は 100
-- `dock-breakpoint`（`dockBreakpoint`）: この幅（px）未満では、欄のすぐ下に画面幅いっぱいで出す。既定は 560
-- `show-conditions`（`showConditions`）: 条件欄を出すか。既定は `true`
-- 検索条件の初期値: `range`（例 `1600-1700`）・`over-match`（`overMatch`）・`tsuchinoe-inu`（`tsuchinoeInu`）・`tsuchinoto-mi`（`tsuchinotoMi`）。まとめて扱うときは `searchOptions` プロパティ
+属性の値はプロパティに反映されます（括弧内がプロパティ名）。向きは属性からプロパティへの一方向で、プロパティに代入しても属性は変わりません。不正な値は、エラーにせず黙って既定値になります。
 
-イベント（要素で受け取る）:
+| 属性（プロパティ） | 既定値 | 意味 |
+| --- | --- | --- |
+| `nengo`・`year`・`eto` | なし | 和暦・西暦・干支を入れる欄の id。先頭の `#` は付けても付けなくてもよい |
+| `trigger-label`（`triggerLabel`） | `元` | 起動ボタンの文字 |
+| `shortcut` | `true` | Ctrl+J / ⌘J で開閉するか |
+| `max-candidates`（`maxCandidates`） | `100` | 一度に並べる候補の数（1 以上）。超えた分は件数だけ出す |
+| `dock-breakpoint`（`dockBreakpoint`） | `560` | 画面の幅（px）がこれ未満なら、欄のすぐ下に画面幅いっぱいで出す |
+| `show-conditions`（`showConditions`） | `true` | 条件欄を出すか |
+| `range` | なし（範囲なし） | 検索条件の初期値: 西暦の範囲 |
+| `over-match`（`overMatch`） | `false` | 検索条件の初期値: 延長マッチ |
+| `tsuchinoe-inu`（`tsuchinoeInu`） | `false` | 検索条件の初期値: 戊と戌を見分けない |
+| `tsuchinoto-mi`（`tsuchinotoMi`） | `false` | 検索条件の初期値: 己と巳を見分けない |
 
-- `harumiOpen`・`harumiClose`: 開いた後・閉じた後（`detail.field`）
-- `harumiCommit`: 欄へ入れた後（`detail.result` は選んだ候補、`detail.fields` は組の欄）
+真偽値の属性は、ふつうの HTML の真偽属性と違い、文字列 `"false"` で偽になります。属性が無いときは既定値、値が空・`"true"`・属性名と同じなら真です。
 
-それぞれの欄では、ふつうの入力と同じく `input` と `change` が起きるので、React や Vue の束縛にも届きます。外すときは `picker.detach(欄)`、すべて片付けるときは `picker.destroy()` を呼びます。
+検索条件は `searchOptions` プロパティ（`ambiguousSearch` のオプションと同じ形）でまとめて読み書きできます。読み出すと、利用者が条件欄で変えた値を含む、いまの条件が返ります。属性・プロパティ・条件欄のうち、最後に変えたものが効きます。
+
+#### 条件欄
+
+- **西暦の範囲**: 開始と終了の両端を含みます。片側だけでも書けます（「1600〜」「〜1700」）。全角の数字も読みます。属性では `1600-1700`・`1600-`・`-1700` と書きます。
+- **延長マッチ**: 改元の後も、旧元号の年数を 2 年先まで候補に出します（例: 改元の翌年に、まだ旧元号で刻んだ年）。延長分の候補には「延長マッチ」と出ます。
+- **戊と戌を見分けない**・**己と巳を見分けない**: 字形が似ていて読み分けにくい字を、同じ字として照合します。
+
+#### メソッドと読み出し専用のプロパティ
+
+- `fields`: いま受け持っている欄（`{ nengo, year, eto }`。無い役は `null`）。
+- `isOpen`: ポップアップが開いているか。
+- `open(欄)`・`close()`・`toggle(欄)`: 受け持つ欄を起点に開く・閉じる・開閉する。`close({ refocus: true })` で欄へ戻る。
+- `attach({ nengo, year, eto })`: 欄を要素かセレクタで指定します。セレクタは `document.querySelector` で探します（影の中の欄は要素を渡してください）。渡した役だけを置き換え、ほかの役はそのままです。要素がページに入っていなければ `document.body` の末尾へ入れます。
+- `detach(欄)`: 欄を外します。省略するとすべて外します。
+- `destroy()`: すべて外し、要素もページから取り除きます。
+
+#### 欄を探す時期
+
+属性の id で欄を探すのは、次の 3 つのときだけです。
+
+- 要素がページに入ったとき
+- ページの読み込み中に入った場合は、DOMContentLoaded のとき
+- `nengo`・`year`・`eto` の属性（またはプロパティ）を変えたとき
+
+これより後に描画された欄は見つけられません。属性を設定し直すか、`attach()` で付けてください。
+
+要素をページから外すと、受け持っていた欄からも外れます。ページに戻すと、属性の id の欄は探し直して付け直しますが、`attach()` で付けた欄は付け直しません。もう一度 `attach()` を呼んでください。
+
+#### イベント
+
+要素で受け取ります（bubbles あり）。
+
+- `harumiOpen`: ポップアップが開いた後（`detail.field` は開いた欄）。
+- `harumiClose`: ポップアップが閉じた後（`detail.field`）。候補を選んだとき・Esc・×・外側のクリック・利用者が欄へ戻ったときに起きます。
+- `harumiCommit`: 欄へ値を入れた後、閉じる前（`detail.result` は選んだ候補、`detail.fields` は組の欄）。
+
+それぞれの欄では、ふつうの入力と同じく `input` と `change` が起きます。値は要素の元の `value` の setter で入れるので、React の制御された欄（`value` と `onChange`）にも変化が届きます。
 
 ### ユースケース例
 
