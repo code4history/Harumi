@@ -108,6 +108,7 @@ import '@c4h/harumi';
 
 ```html
 <input id="nengo"> <input id="seireki"> <input id="eto">
+<!-- The era field gets "寛永1", the year field "1624" and the cycle field "甲子" -->
 <harumi-picker nengo="nengo" year="seireki" eto="eto"></harumi-picker>
 ```
 
@@ -170,7 +171,7 @@ The `searchOptions` property (same shape as the `ambiguousSearch` options) reads
 - `fields`: The fields currently served (`{ nengo, year, eto }`; `null` for a missing role).
 - `isOpen`: Whether the popup is open.
 - `open(field)`, `close()`, `toggle(field)`: Open, close or toggle from a served field. `close({ refocus: true })` returns focus to the field.
-- `attach({ nengo, year, eto })`: Set fields by element or selector. Selectors are looked up with `document.querySelector` (pass the element for fields inside a shadow root). Only the roles you pass are replaced; the others stay. If the element is not in the page, it is appended to the end of `document.body`.
+- `attach({ nengo, year, eto })`: Set fields by element or selector. Selectors are looked up with `document.querySelector` (pass the element for fields inside a shadow root). Only the roles you pass are replaced; the others stay. If the element is not in the page, it is appended to the end of `document.body`. Only the roles that resolve to an `<input>` or `<textarea>` element are replaced: a missing value (`null` or `undefined`), a selector that matches nothing, or an element that is neither `<input>` nor `<textarea>` leaves that role as it is. When not a single role is replaced, `attach()` returns without doing anything — the element is not added to the page and no listeners are changed. Passing the same field again leaves that role on the same field (only the listeners are re-synced).
 - `detach(field)`: Detach a field, or all fields when omitted.
 - `destroy()`: Detach everything and remove the element from the page.
 
@@ -191,7 +192,15 @@ Removing the element from the page detaches its fields. When it is added back, f
 Dispatched on the element (they bubble).
 
 - `harumiOpen`: After the popup opens (`detail.field` is the field it was opened from).
-- `harumiClose`: After the popup closes (`detail.field`). Fires when a candidate is picked, on Esc, ×, a click outside, or when the user returns to a field.
+- `harumiClose`: After the popup closes (`detail.field` is the field it was opened from). It fires only when the popup was open, in these cases:
+  - when a candidate is picked (after `harumiCommit`),
+  - on Esc (from the character field, the conditions panel, or an attached field),
+  - on the × button,
+  - when the trigger button or Ctrl+J (⌘J) closes it,
+  - on a mouse press outside the popup, the trigger button and the attached fields,
+  - when the user puts focus back into an attached field,
+  - when `close()` is called from script,
+  - when a detach — `detach()`, `destroy()`, changing the `nengo`, `year` or `eto` attribute, or removing the element from the page — takes away the field it was opened from, or the last field it serves.
 - `harumiCommit`: After the values are written and before the popup closes (`detail.result` is the picked candidate, `detail.fields` the group's fields).
 
 Each filled field fires `input` and `change` like normal typing. Values are written through the element's original `value` setter, so controlled React fields (`value` with `onChange`) see the change.

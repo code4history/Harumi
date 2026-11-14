@@ -13,6 +13,7 @@
 - **Split `index.ts`**: The body of `ambiguousSearch` moved to `src/search.ts`, and `index.ts` now only re-exports `ambiguousSearch` and `HarumiPicker`. The exported names and behavior are unchanged.
 - **開発用の依存に jsdom を追加しました**: `<harumi-picker>` のテストのためです。利用者がインストールするものは変わりません。
 - **Added jsdom as a devDependency**: It is used by the `<harumi-picker>` tests. Nothing changes for what users install.
+- **型定義の出力に `/// <reference lib="dom" />` を入れるようになりました**: `harumi-picker.d.ts` の先頭で DOM の型を引くので、tsconfig の lib に DOM を入れていない利用者でも型エラーになりません。
 
 ## [1.1.0] - 2026-11-02
 
