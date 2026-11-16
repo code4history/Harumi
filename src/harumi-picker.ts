@@ -212,12 +212,12 @@ function toElements(target: DetachTarget): Element[] {
   return Array.from(target as ArrayLike<Element>);
 }
 
-/** 影を辿った最も深い activeElement。 */
 /** 開閉のショートカット（Ctrl+J / ⌘J）か。 */
 function isToggleShortcut(e: KeyboardEvent): boolean {
   return (e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'j';
 }
 
+/** 影を辿った最も深い activeElement。 */
 function deepActiveElement(): Element | null {
   let ae: Element | null = document.activeElement;
   while (ae && ae.shadowRoot && ae.shadowRoot.activeElement) ae = ae.shadowRoot.activeElement;
@@ -913,6 +913,8 @@ export class HarumiPicker extends BaseElement {
     });
     // 条件欄でも Esc・Ctrl+J（⌘J）で閉じられるようにする
     details.addEventListener('keydown', (e) => {
+      // 変換中（composition）のキーは IME に任せる
+      if (e.isComposing || e.keyCode === 229) return;
       if (e.key === 'Escape' || (this.cfgShortcut && isToggleShortcut(e))) {
         e.preventDefault();
         this.close({ refocus: true });

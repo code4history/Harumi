@@ -91,7 +91,7 @@ interface SearchResult {
 
 `<harumi-picker>` adds a popup to your page's form fields that lets users pick an era from the characters they could read. Its look and keyboard handling match `<naga-ime>` in the sibling project [Nagarjuna](https://github.com/code4history/Nagarjuna). Available from `1.2.0`.
 
-- When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac); press Ctrl+J or Esc again to close it.
+- When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac); press Ctrl+J (⌘J) again or Esc to close it.
 - Type the characters you could read to list candidate eras. Open "条件" (conditions) to change the search conditions (see "Conditions" below).
 - Picking a candidate (click, Enter, or a number key) writes the Japanese era (e.g. `寛永1`), the Western year (`1624`) and the sexagenary cycle (`甲子`) into their fields, replacing the old values, closes the popup and returns focus to the field it was opened from.
 
