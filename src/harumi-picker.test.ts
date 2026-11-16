@@ -286,6 +286,21 @@ describe('<harumi-picker>', () => {
       expect(picker.isOpen).toBe(false);
     });
 
+    it('開いた後も Ctrl+J（⌘J）で閉じて元の欄へ戻る。shortcut を切れば反応しない', () => {
+      const picker = mount();
+      picker.open(nengo);
+      parts(picker).search.dispatchEvent(key({ key: 'j', ctrlKey: true }));
+      expect(picker.isOpen).toBe(false);
+      expect(document.activeElement).toBe(nengo);
+      picker.open(nengo);
+      parts(picker).search.dispatchEvent(key({ key: 'j', metaKey: true }));
+      expect(picker.isOpen).toBe(false);
+      picker.setAttribute('shortcut', 'false');
+      picker.open(nengo);
+      parts(picker).search.dispatchEvent(key({ key: 'j', ctrlKey: true }));
+      expect(picker.isOpen).toBe(true);
+    });
+
     it('利用者が欄へフォーカスを戻すと閉じる', () => {
       const picker = mount();
       picker.open(nengo);

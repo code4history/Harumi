@@ -91,7 +91,7 @@ interface SearchResult {
 
 ページの入力欄に、読み取れた字から元号を選んで入れる補助を付けられます。見た目と操作は、兄弟プロダクト [Nagarjuna](https://github.com/code4history/Nagarjuna) の `<naga-ime>` と同じです。`1.2.0` から使えます。
 
-- 取り付けた欄にフォーカスすると、欄の右上に「元」のボタンが出ます。ボタンか Ctrl+J（Mac は ⌘J）で開きます。
+- 取り付けた欄にフォーカスすると、欄の右上に「元」のボタンが出ます。ボタンか Ctrl+J（Mac は ⌘J）で開き、もう一度 Ctrl+J か Esc で閉じます。
 - 読み取れた字を入れると元号の候補が並びます。「条件」を開くと検索の条件を変えられます（下の「条件欄」）。
 - 候補を選ぶと（クリック・Enter・数字キー）、和暦・西暦・干支をそれぞれの欄に入れて閉じ、開いた欄へ戻ります。欄の値は置き換わります。
 
@@ -147,7 +147,7 @@ picker.addEventListener('harumiCommit', (e) => console.log(e.detail.result));
 | --- | --- | --- |
 | `nengo`・`year`・`eto` | なし | 和暦・西暦・干支を入れる欄の id。先頭の `#` は付けても付けなくてもよい |
 | `trigger-label`（`triggerLabel`） | `元` | 起動ボタンの文字 |
-| `shortcut` | `true` | Ctrl+J / ⌘J で開くか |
+| `shortcut` | `true` | Ctrl+J / ⌘J で開閉するか |
 | `max-candidates`（`maxCandidates`） | `100` | 一度に並べる候補の数（1 以上）。超えた分は件数だけ出す |
 | `dock-breakpoint`（`dockBreakpoint`） | `560` | 画面の幅（px）がこれ未満なら、欄のすぐ下に画面幅いっぱいで出す |
 | `show-conditions`（`showConditions`） | `true` | 条件欄を出すか |
