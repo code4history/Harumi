@@ -91,7 +91,7 @@ interface SearchResult {
 
 `<harumi-picker>` adds a popup to your page's form fields that lets users pick an era from the characters they could read. Its look and keyboard handling match `<naga-ime>` in the sibling project [Nagarjuna](https://github.com/code4history/Nagarjuna). Available from `1.2.0`.
 
-- When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac).
+- When an attached field has focus, a small "元" button appears at its top right. Open the popup with the button or Ctrl+J (⌘J on Mac); press Ctrl+J (⌘J) again or Esc to close it.
 - Type the characters you could read to list candidate eras. Open "条件" (conditions) to change the search conditions (see "Conditions" below).
 - Picking a candidate (click, Enter, or a number key) writes the Japanese era (e.g. `寛永1`), the Western year (`1624`) and the sexagenary cycle (`甲子`) into their fields, replacing the old values, closes the popup and returns focus to the field it was opened from.
 
@@ -147,7 +147,7 @@ Attribute values are reflected to properties (property names in parentheses). Re
 | --- | --- | --- |
 | `nengo`, `year`, `eto` | none | Ids of the fields that receive the era, the Western year and the cycle. A leading `#` is optional |
 | `trigger-label` (`triggerLabel`) | `元` | Text of the trigger button |
-| `shortcut` | `true` | Whether Ctrl+J / ⌘J opens the popup |
+| `shortcut` | `true` | Whether Ctrl+J / ⌘J opens and closes the popup |
 | `max-candidates` (`maxCandidates`) | `100` | How many candidates to list at once (1 or more). Only the count of the rest is shown |
 | `dock-breakpoint` (`dockBreakpoint`) | `560` | Below this viewport width (px), the popup appears right under the field at full width |
 | `show-conditions` (`showConditions`) | `true` | Whether to show the conditions panel |

@@ -5,8 +5,8 @@
 ## [Unreleased]
 
 ### Added
-- **入力欄の補助 `<harumi-picker>` を追加しました**: 読み取れた字から元号の候補を出し、選んだ候補の和暦・西暦・干支を、ページの指定した欄へそれぞれ入れるカスタム要素です。見た目と操作は Nagarjuna の `<naga-ime>` に合わせています。使い方は README の「入力欄の補助」を参照してください。
-- **Added the `<harumi-picker>` input helper**: A custom element that lists candidate eras from the characters you could read and writes the picked candidate's era, Western year and sexagenary cycle into the fields the page specifies. Its look and keyboard handling match `<naga-ime>` in Nagarjuna. See "Input helper for form fields" in the README.
+- **入力欄の補助 `<harumi-picker>` を追加しました**: 読み取れた字から元号の候補を出し、選んだ候補の和暦・西暦・干支を、ページの指定した欄へそれぞれ入れるカスタム要素です。見た目と操作は Nagarjuna の `<naga-ime>` に合わせています。Ctrl+J（Mac は ⌘J）で開き、開いた後も Ctrl+J か Esc で閉じます。使い方は README の「入力欄の補助」を参照してください。
+- **Added the `<harumi-picker>` input helper**: A custom element that lists candidate eras from the characters you could read and writes the picked candidate's era, Western year and sexagenary cycle into the fields the page specifies. Its look and keyboard handling match `<naga-ime>` in Nagarjuna. Ctrl+J (⌘J on Mac) opens it, and Ctrl+J or Esc closes it again. See "Input helper for form fields" in the README.
 
 ### Changed
 - **`index.ts` を分けました**: `ambiguousSearch` の本体を `src/search.ts` へ移しました。`index.ts` は `ambiguousSearch` と `HarumiPicker` を公開する入口だけになります。公開している名前と動作は変わりません。

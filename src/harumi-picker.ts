@@ -212,6 +212,11 @@ function toElements(target: DetachTarget): Element[] {
   return Array.from(target as ArrayLike<Element>);
 }
 
+/** 開閉のショートカット（Ctrl+J / ⌘J）か。 */
+function isToggleShortcut(e: KeyboardEvent): boolean {
+  return (e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'j';
+}
+
 /** 影を辿った最も深い activeElement。 */
 function deepActiveElement(): Element | null {
   let ae: Element | null = document.activeElement;
@@ -906,9 +911,11 @@ export class HarumiPicker extends BaseElement {
     details.addEventListener('toggle', () => {
       if (this.openState) this.positionPopup();
     });
-    // 条件欄でも Esc で閉じられるようにする
+    // 条件欄でも Esc・Ctrl+J（⌘J）で閉じられるようにする
     details.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+      // 変換中（composition）のキーは IME に任せる
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === 'Escape' || (this.cfgShortcut && isToggleShortcut(e))) {
         e.preventDefault();
         this.close({ refocus: true });
       }
@@ -977,7 +984,7 @@ export class HarumiPicker extends BaseElement {
       if (ae !== this.trigger && !(isField(ae) && this.bindings.has(ae))) this.hideTrigger();
     };
     const onKeydown = (e: KeyboardEvent) => {
-      if (this.cfgShortcut && (e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'j') {
+      if (this.cfgShortcut && isToggleShortcut(e)) {
         e.preventDefault();
         this.toggle(field);
         return;
@@ -1216,6 +1223,12 @@ export class HarumiPicker extends BaseElement {
     const n = Math.min(this.candidates.length, this.cfgMaxCandidates);
     // 変換中（composition）のキーは一切消費しない
     if (this.composing || e.isComposing || e.keyCode === 229) return;
+    // 開いたときと同じ Ctrl+J（⌘J）で閉じて元の欄へ戻る
+    if (this.cfgShortcut && isToggleShortcut(e)) {
+      e.preventDefault();
+      this.close({ refocus: true });
+      return;
+    }
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       this.selectedIndex = (this.selectedIndex + 1) % Math.max(n, 1);
