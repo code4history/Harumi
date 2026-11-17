@@ -28,7 +28,7 @@ export function ambiguousSearch(text: string, options: SearchOptions = {}): Sear
   const since = range_match ? range_match[1] : '';
   const till = range_match ? range_match[2] : '';
 
-  // 候補集合を得る固定の JSONPath 式。入力文字列を式へ連結しない（AC2）。
+  // 候補集合を得る固定の JSONPath 式。入力文字列を式へ連結しない。
   // 照合は入力を 1 文字ずつ TypeScript 側で文字どおり行うため、正規表現の
   // 特殊文字（? ( [ ] { } * + . ^ $ | \ / など）が式へ混入して例外になることがない。
   const candidates = JSONPath({
