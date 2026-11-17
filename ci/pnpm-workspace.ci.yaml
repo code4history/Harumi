@@ -2,11 +2,11 @@ allowBuilds:
   esbuild: true
   fsevents: false
 
-# m1-t7 D-5: outer の overrides のうち当 repo に必要な部分集合のみを配る
-# （正本は scripts/m1-t3/overrides.json。全量コピーは verify:m1-t3:overrides を FAIL させる）
+# 親の作業場所の overrides のうち当 repo に必要な部分集合のみを配る
+# （正本は親の作業場所の overrides の一覧。全量をここへ写すと親の側の検査が落ちる）
 overrides:
   minimatch: "^9.0.7"
-  # extract-zip（high×2・修正版なし）→ Electron 公式の置換 fork。経路限定（oct26-m5-t12）。
+  # extract-zip（high×2・修正版なし）→ Electron 公式の置換 fork。経路限定。
   "@puppeteer/browsers>extract-zip": "npm:@electron-internal/extract-zip@^1.0.5"
   # undici: <7.30.1 の high（GHSA-4w7w-5xrc-9h26 ほか）。7 系のまま上げる
   undici: "^7.30.1"

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 
 // =============================================================
-// SR-NOV26-A1-1（Low）: ambiguousSearch の入力長の上限と重複除去
+// セキュリティレビューの指摘（Low）: ambiguousSearch の入力長の上限と重複除去
 //
 // 照合は candidate.ambiguos.includes(char) の全文字 AND（index.ts の chars.every）であり、
 // 結果は入力の「字の集合」だけに依存する。したがって照合前の重複除去は挙動を変えない。
@@ -28,7 +28,7 @@ import { ambiguousSearch } from './index';
 const distinctChars = (n: number): string =>
   Array.from({ length: n }, (_, i) => String.fromCodePoint(0x4e00 + i)).join('');
 
-describe('ambiguousSearch 入力長の上限（SR-NOV26-A1-1）', () => {
+describe('ambiguousSearch 入力長の上限', () => {
   // ---- (a) 同じ字の繰り返しは 1 字のときと同じ結果 ----
   describe('重複除去の等価性（a）', () => {
     it('同じ字の繰り返しは 1 字のときと同じ結果を返す', () => {

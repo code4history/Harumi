@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * ci/verify-artifact-smoke.mjs — Cycle 2 m1-t5（設計 §6.3）
+ * ci/verify-artifact-smoke.mjs — CI 成果物（配布物そのもの）の smoke
  *
  * CI が同一 job 内で upload → download した package artifact（`pnpm pack` の .tgz）を展開し、
  * **配布物そのもの**に対して smoke を実行する。
- * outer rule-0014「『手元でビルドして動いた』は CI 成果物の検証にならない」の実装である。
+ * 「『手元でビルドして動いた』は CI 成果物の検証にならない」という規則の実装である。
  *
  *   node ci/verify-artifact-smoke.mjs --artifact-dir=<dir> --report=<path>
  *
  * 依存は Node 標準機能のみ（node:fs / node:path / node:child_process）。
- * 新規 devDependency を追加しない（設計 §9.5 項1）。
+ * 新規 devDependency を追加しない。
  *
  * 検査（3 repo 共通の骨格）:
  *   S1 --artifact-dir 直下に .tgz がちょうど1件
@@ -207,11 +207,11 @@ function main() {
       fs.cpSync(packageDir, stagedPackage, { recursive: true });
       // staging 直下に別名の package.json を置く。これが無いと Node の self-reference
       // （package.json の name で自分自身を解決する機能）が働き、staging ではなく
-      // **repo の作業ツリー**が解決されてしまう（実測で検出した。設計 §6.3
+      // **repo の作業ツリー**が解決されてしまう（実測で検出した。
       // 「S5 は配布された tarball の中身だけで実行する」を破る経路である）。
       fs.writeFileSync(
         path.join(stageDir, "package.json"),
-        JSON.stringify({ name: "cycle2-artifact-smoke-stage", version: "0.0.0", private: true }, null, 2) + "\n",
+        JSON.stringify({ name: "ci-artifact-smoke-stage", version: "0.0.0", private: true }, null, 2) + "\n",
       );
       const driverPath = path.join(stageDir, "smoke-driver.mjs");
       fs.writeFileSync(driverPath, SMOKE_DRIVER_SOURCE);
@@ -227,7 +227,7 @@ function main() {
   // ---- S6: レポート出力 ----
   const failed = checks.filter((check) => !check.ok);
   const lines = [
-    "# Cycle 2 artifact smoke report",
+    "# CI artifact smoke report",
     "repo: " + REPO,
     "package: " + (manifest ? manifest.name + "@" + manifest.version : "(unknown)"),
     "node: " + process.version,
