@@ -16,7 +16,7 @@ overrides:
   glob@14>minimatch: ^11.0.1
   editorconfig>minimatch: ^11.0.1
   filelist>minimatch: ^11.0.1
-  encoding-sniffer: ^1.0.2
+  cheerio@1.2.0>encoding-sniffer: ^1.0.2
 
 importers:
 
