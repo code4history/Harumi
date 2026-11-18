@@ -26,3 +26,10 @@ overrides:
   # editorconfig は Minimatch#match、filelist は minimatch.match() だけを使い、どちらも 11 系にある
   "editorconfig>minimatch": "^11.0.1"
   "filelist>minimatch": "^11.0.1"
+  # cheerio（pwa-asset-generator 経由）が引く encoding-sniffer 0.2.1 は whatwg-encoding 3.1.1
+  # （非推奨・@exodus/bytes への置換を指示）を引く。encoding-sniffer 1.0.2 は @exodus/bytes を使い、
+  # export（decodeBuffer / DecodeStream / getEncoding）と SnifferOptions の形は 0.2.1 と同一
+  # （型定義の差分が注釈のみであることを確認）。cheerio が使うのも decodeBuffer / DecodeStream
+  # だけであり Node も CI の 22 / 24 の範囲に収まる。cheerio は ^0.2.1 に留まるため上流待ち
+  # （cheeriojs/cheerio#4977）。
+  encoding-sniffer: "^1.0.2"
