@@ -2,7 +2,7 @@
 
 このプロジェクトの主な変更を記録します。版数は [Semantic Versioning](https://semver.org/) に従います。
 
-## [Unreleased]
+## [1.2.0-rc.1] - 2026-11-26
 
 ### Added
 - **入力欄の補助 `<harumi-picker>` を追加しました**: 読み取れた字から元号の候補を出し、選んだ候補の和暦・西暦・干支を、ページの指定した欄へそれぞれ入れるカスタム要素です。見た目と操作は Nagarjuna の `<naga-ime>` に合わせています。Ctrl+J（Mac は ⌘J）で開き、開いた後も Ctrl+J か Esc で閉じます。使い方は README の「入力欄の補助」を参照してください。
